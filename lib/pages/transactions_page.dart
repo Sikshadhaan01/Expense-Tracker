@@ -1,3 +1,4 @@
+import 'package:expense_tracker/components/add_transaction_btn.dart';
 import 'package:expense_tracker/configs/CustomColors.dart';
 import 'package:expense_tracker/pages/homepage.dart';
 import 'package:flutter/cupertino.dart';
@@ -84,6 +85,7 @@ class _TransactionPageState extends State<TransactionPage>
               controller: _controller,
               children: dateList.map((e) => TransactionListTile(transactions: transactions)).toList(),
             ),
+            floatingActionButton: AddTransactionBtn(),
           )
         : CircularProgressIndicator(
             color: CustomColors().primaryColor,

@@ -1,3 +1,4 @@
+import 'package:expense_tracker/components/add_transaction_btn.dart';
 import 'package:expense_tracker/configs/CustomColors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -151,6 +152,7 @@ class _HomepageState extends State<Homepage> {
           ],
         ),
       ),
+      floatingActionButton: AddTransactionBtn(),
     );
   }
 

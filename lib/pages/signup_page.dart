@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SignUpPage extends StatelessWidget {
   const SignUpPage({super.key});
@@ -96,7 +97,7 @@ class _SignUpFormState extends State<SignUpForm> {
               },
             ),
           ),
-          const SizedBox(height: 10),
+          //const SizedBox(height: 10),
           Text(
             "Email",
             style: Theme.of(context).textTheme.labelMedium,
@@ -121,7 +122,7 @@ class _SignUpFormState extends State<SignUpForm> {
               },
             ),
           ),
-          const SizedBox(height: 10),
+          //const SizedBox(height: 10),
           Text(
             "Password",
             style: Theme.of(context).textTheme.labelMedium,
@@ -146,7 +147,7 @@ class _SignUpFormState extends State<SignUpForm> {
               },
             ),
           ),
-          const SizedBox(height: 10),
+          //const SizedBox(height: 10),
           Text(
             "Confirm Password",
             style: Theme.of(context).textTheme.labelMedium,
@@ -171,10 +172,11 @@ class _SignUpFormState extends State<SignUpForm> {
               },
             ),
           ),
-          const SizedBox(height: 10),
+          // const SizedBox(height: 10),
           ElevatedButton(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
+                context.go('/'); 
                 // Perform sign-up logic here
                 // For example, send data to server
                 // and navigate to another screen
