@@ -2,11 +2,14 @@
 import 'package:expense_tracker/components/bottom_nav_bar.dart';
 import 'package:expense_tracker/pages/login_page.dart';
 import 'package:expense_tracker/pages/signup_page.dart';
+import 'package:expense_tracker/pages/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRoutes {
-  final GoRouter router = GoRouter(routes: <RouteBase>[
+  final GoRouter router = GoRouter( 
+    initialLocation: '/splashscreen',
+    routes: <RouteBase>[
     GoRoute(
         path: "/",
         name: 'home',
@@ -30,6 +33,12 @@ class AppRoutes {
       pageBuilder: (context, state) {
         return const MaterialPage(child: LoginPage());
       },
-    )
+    ),
+    GoRoute(
+          name: 'splashscreen',
+          path: '/splashscreen',
+          pageBuilder: (context, state) =>
+              const MaterialPage(child: SplashScreen()),
+        ),
   ]);
 }

@@ -1,3 +1,4 @@
+import 'package:expense_tracker/pages/budgets_page.dart';
 import 'package:expense_tracker/pages/homepage.dart';
 import 'package:expense_tracker/pages/login_page.dart';
 import 'package:expense_tracker/pages/signup_page.dart';
@@ -16,8 +17,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
   final List _pages = [
     const Homepage(),
     const TransactionPage(),
-    const Text("Page 3"),
-    const Text("Page 4"),
+    const BudgetPage(),
+    // const Text("Page 4"),
   ];
   int _selectedIndex = 0;
   void _onItemTapped(int index) {
@@ -32,7 +33,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       body: Center(child: _pages.elementAt(_selectedIndex),),
       bottomNavigationBar: BottomNavigationBar(
         // selectedFontSize: 8,
-        unselectedFontSize: 10,
+        unselectedFontSize: 10, 
         type: BottomNavigationBarType.fixed,
         showUnselectedLabels: false,
         unselectedItemColor: Colors.white,
@@ -55,6 +56,6 @@ List<BottomNavigationBarItem> _navBarItems() {
         label: 'Transactions'),
     const BottomNavigationBarItem(
         icon: Icon(Icons.pie_chart_sharp), label: 'Budgets'),
-    const BottomNavigationBarItem(icon: Icon(Icons.more_horiz), label: 'More'),
+    // const BottomNavigationBarItem(icon: Icon(Icons.more_horiz), label: 'More'),
   ];
 }

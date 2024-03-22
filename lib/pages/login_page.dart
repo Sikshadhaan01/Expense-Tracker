@@ -1,4 +1,7 @@
+import 'package:expense_tracker/pages/homepage.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -40,8 +43,8 @@ class LoginPage extends StatelessWidget {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20))),
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
+              child: const Padding(
+                padding: EdgeInsets.all(20.0),
                 child: LoginForm(),
               ),
             ),
@@ -84,9 +87,10 @@ class _LoginFormState extends State<LoginForm> {
             controller: _emailController,
             style: Theme.of(context).textTheme.labelMedium,
             decoration: InputDecoration(
-              errorStyle: Theme.of(context).textTheme.labelSmall,
-              enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-              border:const OutlineInputBorder(),
+                errorStyle: Theme.of(context).textTheme.labelSmall,
+                enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black)),
+                border: const OutlineInputBorder(),
                 suffixIcon: const Icon(Icons.email),
                 suffixIconColor: Colors.white),
             validator: (value) {
@@ -102,13 +106,14 @@ class _LoginFormState extends State<LoginForm> {
             style: Theme.of(context).textTheme.labelMedium,
           ),
           TextFormField(
-             style: Theme.of(context).textTheme.labelMedium,
+            style: Theme.of(context).textTheme.labelMedium,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             // expands: true,
             controller: _passwordController,
             decoration: InputDecoration(
-              enabledBorder:const OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-              errorStyle: Theme.of(context).textTheme.labelSmall,
+                enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black)),
+                errorStyle: Theme.of(context).textTheme.labelSmall,
                 border: const OutlineInputBorder(),
                 suffixIcon: const Icon(Icons.lock_open),
                 suffixIconColor: Colors.white),
@@ -120,21 +125,58 @@ class _LoginFormState extends State<LoginForm> {
             },
           ),
           const SizedBox(height: 10),
+          const SizedBox(height: 10),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFe53946)),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFe53946)),
             onPressed: () {
+             
               if (_formKey.currentState!.validate()) {
+                 context.go('/'); 
                 // Perform sign-up logic here
                 // For example, send data to server
                 // and navigate to another screen
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('Sign up successful!'),
+                    content: Text('Login successful!'),
                   ),
                 );
               }
             },
-            child: const Text('Log In', style: TextStyle(color: Colors.white),),
+            child: const Text(
+              'Log In',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+           Text.rich(
+            TextSpan(
+              children: [
+               const TextSpan(
+                  text: "Don't have an account?",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 12),
+                ),
+              const  WidgetSpan(
+                    child: SizedBox(
+                  width: 5,
+                )),
+                TextSpan( 
+                  text: "SignUp",
+                  style: const TextStyle(
+                    color: Colors.purple,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                  ..onTap =() => context.go('/signup')
+                ),
+              ],
+            ),
           ),
         ],
       ),
