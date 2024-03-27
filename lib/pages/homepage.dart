@@ -152,7 +152,7 @@ class _HomepageState extends State<Homepage> {
           ],
         ),
       ),
-      floatingActionButton: AddTransactionBtn(),
+      floatingActionButton:  AddTransactionBtn(),
     );
   }
 

@@ -41,8 +41,8 @@ class SignUpPage extends StatelessWidget {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20))),
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
+              child:const Padding(
+                padding: EdgeInsets.all(20.0),
                 child: SignUpForm(),
               ),
             ),
@@ -54,6 +54,8 @@ class SignUpPage extends StatelessWidget {
 }
 
 class SignUpForm extends StatefulWidget {
+  const SignUpForm({super.key});
+
   @override
   _SignUpFormState createState() => _SignUpFormState();
 }

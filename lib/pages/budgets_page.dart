@@ -2,6 +2,7 @@ import 'package:expense_tracker/components/add_transaction_btn.dart';
 import 'package:expense_tracker/configs/CustomColors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
@@ -154,7 +155,9 @@ class _BudgetPageState extends State<BudgetPage> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
-                child: IconButton(onPressed: (){}, icon:Icon(Icons.add)),
+                child: IconButton(onPressed: (){
+                  context.go("/budgetandmemberpage");
+                }, icon:Icon(Icons.add)),
                 height: 150,
                   width: double.infinity,
                   decoration: BoxDecoration( 
