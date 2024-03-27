@@ -1,5 +1,8 @@
 // import 'package:academic_chatbot/pages/chat_bot_page.dart';
 import 'package:expense_tracker/components/bottom_nav_bar.dart';
+import 'package:expense_tracker/pages/budgetandmember_page.dart';
+import 'package:expense_tracker/pages/budgets_page.dart';
+import 'package:expense_tracker/pages/category_page.dart';
 import 'package:expense_tracker/pages/login_page.dart';
 import 'package:expense_tracker/pages/signup_page.dart';
 import 'package:expense_tracker/pages/splash_screen.dart';
@@ -7,9 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRoutes {
-  final GoRouter router = GoRouter( 
-    initialLocation: '/splashscreen',
-    routes: <RouteBase>[
+  final GoRouter router =
+      GoRouter(initialLocation: '/splashscreen', routes: <RouteBase>[
     GoRoute(
         path: "/",
         name: 'home',
@@ -27,7 +29,7 @@ class AppRoutes {
         return const MaterialPage(child: SignUpPage());
       },
     ),
-     GoRoute(
+    GoRoute(
       name: "login",
       path: "/login",
       pageBuilder: (context, state) {
@@ -35,10 +37,28 @@ class AppRoutes {
       },
     ),
     GoRoute(
-          name: 'splashscreen',
-          path: '/splashscreen',
-          pageBuilder: (context, state) =>
-              const MaterialPage(child: SplashScreen()),
-        ),
+      name: 'splashscreen',
+      path: '/splashscreen',
+      pageBuilder: (context, state) =>
+          const MaterialPage(child: SplashScreen()),
+    ),
+    GoRoute(
+      name: "categorypage",
+      path: "/categorypage",
+      pageBuilder: (context, state) =>
+          const MaterialPage(child: CategoryPage()),
+    ),
+    GoRoute(
+      name: "budgetandmemberpage",
+      path: "/budgetandmemberpage",
+      pageBuilder: (context, state) =>
+          const MaterialPage(child: BudgetandmemberPage()),
+    ),
+     GoRoute(
+      name: "budgetspage",
+      path: "/budgetspage",
+      pageBuilder: (context, state) =>
+          const MaterialPage(child: BudgetPage()),
+    )
   ]);
 }

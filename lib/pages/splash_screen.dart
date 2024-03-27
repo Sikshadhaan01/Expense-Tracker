@@ -17,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 1,milliseconds:0 ), () { 
+    Timer(const Duration(seconds: 1,milliseconds:0 ), () { 
       var userId ="loggedout";
        if (userId == "logged") {
         // ignore: use_build_context_synchronously
@@ -28,10 +28,11 @@ class _SplashScreenState extends State<SplashScreen> {
       }
     });
   }
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(child: Container(width: 200,height: 300,
-        decoration:BoxDecoration(color: Colors.black),
+        decoration:const BoxDecoration(color: Colors.black),
       )),
     );
   }
