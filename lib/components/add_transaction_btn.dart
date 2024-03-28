@@ -163,7 +163,7 @@ class AddTransactionBtn extends StatelessWidget {
                             height: 50,
                             child: ElevatedButton(
                               onPressed: () {
-                                Navigator.pop(context);
+                                 Navigator.pop(context);
                                 openModelSheet1(context);
                               },
                               child: Text("Select Category"),
@@ -229,7 +229,7 @@ class AddTransactionBtn extends StatelessWidget {
                     children: [
                       IconButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                             Navigator.pop(context);
                             openModelSheet(context);
                           },
                           icon: const Icon(Icons.arrow_back)),

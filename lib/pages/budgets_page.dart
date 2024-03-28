@@ -156,7 +156,7 @@ class _BudgetPageState extends State<BudgetPage> {
               padding: const EdgeInsets.all(8.0),
               child: Container(
                 child: IconButton(onPressed: (){
-                  context.go("/budgetandmemberpage");
+                  context.go("/addgroup");
                 }, icon:Icon(Icons.add)),
                 height: 150,
                   width: double.infinity,
