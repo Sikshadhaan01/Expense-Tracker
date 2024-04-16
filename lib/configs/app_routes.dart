@@ -46,20 +46,17 @@ class AppRoutes {
     GoRoute(
       name: "categorypage",
       path: "/categorypage",
-      pageBuilder: (context, state) =>
-          const MaterialPage(child: CategoryPage()),
+      pageBuilder: (context, state) => MaterialPage(child: CategoryPage()),
     ),
     GoRoute(
       name: "addgroup",
       path: "/addgroup",
-      pageBuilder: (context, state) =>
-          const MaterialPage(child: AddGroup()),
+      pageBuilder: (context, state) => const MaterialPage(child: AddGroup()),
     ),
-     GoRoute(
+    GoRoute(
       name: "budgetspage",
       path: "/budgetspage",
-      pageBuilder: (context, state) =>
-          const MaterialPage(child: BudgetPage()),
+      pageBuilder: (context, state) => const MaterialPage(child: BudgetPage()),
     )
   ]);
 }

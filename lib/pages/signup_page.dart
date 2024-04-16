@@ -1,3 +1,5 @@
+import 'package:expense_tracker/services/user_service.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -29,7 +31,7 @@ class SignUpPage extends StatelessWidget {
                             color: Color(0xFFe53946)),
                       ),
                     ),
-                   Image.asset("assets/manage-money-pana.png")
+                    Image.asset("assets/front family.jpg")
                   ],
                 ),
               )),
@@ -41,7 +43,7 @@ class SignUpPage extends StatelessWidget {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20))),
-              child:const Padding(
+              child: const Padding(
                 padding: EdgeInsets.all(20.0),
                 child: SignUpForm(),
               ),
@@ -81,13 +83,14 @@ class _SignUpFormState extends State<SignUpForm> {
           ),
           Expanded(
             child: TextFormField(
-               style: Theme.of(context).textTheme.labelMedium,
+              style: Theme.of(context).textTheme.labelMedium,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               // expands: true,
               controller: _nameController,
               decoration: InputDecoration(
-                enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                errorStyle: Theme.of(context).textTheme.labelSmall,
+                  enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black)),
+                  errorStyle: Theme.of(context).textTheme.labelSmall,
                   border: const OutlineInputBorder(),
                   suffixIcon: const Icon(Icons.person),
                   suffixIconColor: Colors.white),
@@ -111,9 +114,10 @@ class _SignUpFormState extends State<SignUpForm> {
               controller: _emailController,
               style: Theme.of(context).textTheme.labelMedium,
               decoration: InputDecoration(
-                errorStyle: Theme.of(context).textTheme.labelSmall,
-                enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                border:const OutlineInputBorder(),
+                  errorStyle: Theme.of(context).textTheme.labelSmall,
+                  enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black)),
+                  border: const OutlineInputBorder(),
                   suffixIcon: const Icon(Icons.email),
                   suffixIconColor: Colors.white),
               validator: (value) {
@@ -131,13 +135,14 @@ class _SignUpFormState extends State<SignUpForm> {
           ),
           Expanded(
             child: TextFormField(
-               style: Theme.of(context).textTheme.labelMedium,
+              style: Theme.of(context).textTheme.labelMedium,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               // expands: true,
               controller: _passwordController,
               decoration: InputDecoration(
-                enabledBorder:const OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                errorStyle: Theme.of(context).textTheme.labelSmall,
+                  enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black)),
+                  errorStyle: Theme.of(context).textTheme.labelSmall,
                   border: const OutlineInputBorder(),
                   suffixIcon: const Icon(Icons.lock_open),
                   suffixIconColor: Colors.white),
@@ -156,13 +161,14 @@ class _SignUpFormState extends State<SignUpForm> {
           ),
           Expanded(
             child: TextFormField(
-               style: Theme.of(context).textTheme.labelMedium,
+              style: Theme.of(context).textTheme.labelMedium,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               // expands: true,
               controller: _confirmPasswordController,
               decoration: InputDecoration(
-                enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                errorStyle: Theme.of(context).textTheme.labelSmall,
+                  enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black)),
+                  errorStyle: Theme.of(context).textTheme.labelSmall,
                   border: const OutlineInputBorder(),
                   suffixIcon: const Icon(Icons.lock),
                   suffixIconColor: Colors.white),
@@ -178,7 +184,23 @@ class _SignUpFormState extends State<SignUpForm> {
           ElevatedButton(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                context.go('/'); 
+                if (_passwordController.text !=
+                    _confirmPasswordController.text) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      backgroundColor: Colors.red,
+                      content: Text('Password doesnt match'),
+                    ),
+                  );
+                  return;
+                }
+                var jsonObj = {
+                  "userName": _nameController.text,
+                  "email": _emailController.text,
+                  "pass": _passwordController.text
+                };
+                UserService().signup(jsonObj);
+                // context.go('/');
                 // Perform sign-up logic here
                 // For example, send data to server
                 // and navigate to another screen
@@ -190,6 +212,35 @@ class _SignUpFormState extends State<SignUpForm> {
               }
             },
             child: const Text('Sign Up'),
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          Text.rich(
+            TextSpan(
+              children: [
+                const TextSpan(
+                  text: "already have an account",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 12),
+                ),
+                const WidgetSpan(
+                    child: SizedBox(
+                  width: 5,
+                )),
+                TextSpan(
+                    text: "Login",
+                    style: const TextStyle(
+                      color: Colors.purple,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () => context.go('/login')),
+              ],
+            ),
           ),
         ],
       ),
