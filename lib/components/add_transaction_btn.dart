@@ -8,28 +8,104 @@ class AddTransactionBtn extends StatelessWidget {
 
   List categoryImages = [
     {
-      "imageUrl": "assets/manage-money-pana.png",
+      "imageUrl": "assets/icons8-internet-48.png",
       "categoryName": "Internet",
     },
     {
-      "imageUrl": "assets/manage-money-pana.png",
+      "imageUrl": "assets/popcorn.png",
       "categoryName": "Entertainment",
     },
     {
-      "imageUrl": "assets/manage-money-pana.png",
-      "categoryName": "Others",
+      "imageUrl": "assets/shopping-bag.png",
+      "categoryName": "Groceries",
     },
     {
-      "imageUrl": "assets/manage-money-pana.png",
-      "categoryName": "Bills",
+      "imageUrl": "assets/gas.png",
+      "categoryName": "fuel",
     },
     {
-      "imageUrl": "assets/manage-money-pana.png",
-      "categoryName": "Bills",
+      "imageUrl": "assets/fast-food.png",
+      "categoryName": "food/drink",
     },
     {
-      "imageUrl": "assets/manage-money-pana.png",
-      "categoryName": "Bills",
+      "imageUrl": "assets/icons8-car-100.png",
+      "categoryName": "car/bike",
+    },
+    {
+      "imageUrl": "assets/taxi.png",
+      "categoryName": "taxi",
+    },
+    {
+      "imageUrl": "assets/lightning_616494.png",
+      "categoryName": "Electricity",
+    },
+    {
+      "imageUrl": "assets/trolley.png",
+      "categoryName": "shopping",
+    },
+    {
+      "imageUrl": "assets/gas (1).png",
+      "categoryName": "gas",
+    },
+    {
+      "imageUrl": "assets/water.png",
+      "categoryName": "water",
+    },
+    {
+      "imageUrl": "assets/icons8-rent-96.png",
+      "categoryName": "rent",
+    },
+    {
+      "imageUrl": "assets/icons8-house-48.png",
+      "categoryName": "house",
+    },
+    {
+      "imageUrl": "assets/maid_320337.png",
+      "categoryName": "maid salary",
+    },
+    {
+      "imageUrl": "assets/icons8-gym-94.png",
+      "categoryName": "gym",
+    },
+    {
+      "imageUrl": "assets/icons8-video-playlist-64.png",
+      "categoryName": "subscription",
+    },
+    {
+      "imageUrl": "assets/beach-chair_3403342.png",
+      "categoryName": "vacation",
+    },
+    {
+      "imageUrl": "assets/icons8-health-care-64.png",
+      "categoryName": "health care",
+    },
+    {
+      "imageUrl": "assets/icons8-education-48.png",
+      "categoryName": "education",
+    },
+    {
+      "imageUrl": "assets/icons8-loan-48.png",
+      "categoryName": "loan",
+    },
+    {
+      "imageUrl": "assets/icons8-pets-64.png",
+      "categoryName": "pets",
+    },
+    {
+      "imageUrl": "assets/tax1.png",
+      "categoryName": "insurance/tax",
+    },
+    {
+      "imageUrl": "assets/icons8-gift-48.png",
+      "categoryName": "gifts",
+    },
+    {
+      "imageUrl": "assets/donation_10880437.png",
+      "categoryName": "doantion",
+    },
+    {
+      "imageUrl": "assets/icons8-flower-48.png",
+      "categoryName": "others",
     },
   ];
 
@@ -43,7 +119,7 @@ class AddTransactionBtn extends StatelessWidget {
       child: const Icon(
         Icons.add,
         color: Colors.white,
-        size: 20,
+        size: 10,
       ),
     );
   }
@@ -114,14 +190,14 @@ class AddTransactionBtn extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: const TextField(
-                        decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(left: 5),
-                            hintText: "Title",
-                            hintStyle: TextStyle(
-                                color: Color.fromARGB(255, 149, 164, 192)),
-                            border: InputBorder.none),
-                      ),
+                      // child: const TextField(
+                      //   decoration: InputDecoration(
+                      //       contentPadding: EdgeInsets.only(left: 5),
+                      //       hintText: "Title",
+                      //       hintStyle: TextStyle(
+                      //           color: Color.fromARGB(255, 149, 164, 192)),
+                      //       border: InputBorder.none),
+                      // ),
                     ),
                   ),
                   Padding(
@@ -163,7 +239,7 @@ class AddTransactionBtn extends StatelessWidget {
                             height: 50,
                             child: ElevatedButton(
                               onPressed: () {
-                                 Navigator.pop(context);
+                                Navigator.pop(context);
                                 openModelSheet1(context);
                               },
                               child: Text("Select Category"),
@@ -204,6 +280,8 @@ class AddTransactionBtn extends StatelessWidget {
     );
   }
 
+  var selectedCategory;
+
   openModelSheet1(context) {
     showModalBottomSheet(
       isScrollControlled: true,
@@ -229,7 +307,7 @@ class AddTransactionBtn extends StatelessWidget {
                     children: [
                       IconButton(
                           onPressed: () {
-                             Navigator.pop(context);
+                            Navigator.pop(context);
                             openModelSheet(context);
                           },
                           icon: const Icon(Icons.arrow_back)),
@@ -253,15 +331,21 @@ class AddTransactionBtn extends StatelessWidget {
                   child: SingleChildScrollView(
                     child: Wrap(
                       children: categoryImages.map((e) {
-                        return Column(
-                          children: [
-                            Image.asset(
-                              e['imageUrl'],
-                              width: 80,
-                              height: 70,
-                            ),
-                            Text(e['categoryName'])
-                          ],
+                        return GestureDetector(
+                          onTap: () {
+                            selectedCategory = e;
+                            Navigator.pop(context);
+                          },
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                e['imageUrl'],
+                                width: 80,
+                                height: 70,
+                              ),
+                              Text(e['categoryName'])
+                            ],
+                          ),
                         );
                       }).toList(),
                     ),
