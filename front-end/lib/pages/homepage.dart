@@ -51,143 +51,145 @@ class _HomepageState extends State<Homepage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Home",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2),
-                  ),
-                  GestureDetector(
-                      onTap: () {
-                        logout();
-                      },
-                      child: const Icon(Icons.logout))
-                ],
+    return SafeArea(
+      child: Scaffold(
+        body: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Home",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 2),
+                    ),
+                    GestureDetector(
+                        onTap: () {
+                          logout();
+                        },
+                        child: const Icon(Icons.logout))
+                  ],
+                ),
               ),
-            ),
-            primaryGroup != null
-                ? Card(
-                    color: CustomColors().primaryColor,
-                    // elevation: 8,
-                    child: Container(
-                      height: 150,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10)),
-                          border: Border.all(
-                              color: CustomColors().secondaryColor, width: 3)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            color: CustomColors().secondaryColor,
-                            width: double.infinity,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    primaryGroup['groupName'],
-                                    style: TextStyle(
-                                        color: CustomColors().primaryTextColor,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 1),
-                                  ),
-                                  RichText(
-                                    text: TextSpan(
-                                        children: [
-                                          TextSpan(
-                                              text:
-                                                  "${formatAmount(primaryGroup['currentAmount'])}",
-                                              style: TextStyle(
-                                                  fontSize: 18,
-                                                  color: CustomColors()
-                                                      .primaryColor,
-                                                  fontWeight: FontWeight.bold)),
-                                          TextSpan(
-                                              text:
-                                                  " left of ${formatAmount(primaryGroup['groupBudget'])}",
-                                              style: TextStyle(
-                                                  color: CustomColors()
-                                                      .primaryTextColor))
-                                        ],
-                                        style: TextStyle(
-                                            // fontSize: 18,
-                                            color:
-                                                CustomColors().secondaryColor)),
-                                  )
-                                ],
+              primaryGroup != null
+                  ? Card(
+                      color: CustomColors().primaryColor,
+                      // elevation: 8,
+                      child: Container(
+                        height: 150,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(10)),
+                            border: Border.all(
+                                color: CustomColors().secondaryColor, width: 3)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              color: CustomColors().secondaryColor,
+                              width: double.infinity,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      primaryGroup['groupName'],
+                                      style: TextStyle(
+                                          color: CustomColors().primaryTextColor,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 1),
+                                    ),
+                                    RichText(
+                                      text: TextSpan(
+                                          children: [
+                                            TextSpan(
+                                                text:
+                                                    "${formatAmount(primaryGroup['currentAmount'])}",
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: CustomColors()
+                                                        .primaryColor,
+                                                    fontWeight: FontWeight.bold)),
+                                            TextSpan(
+                                                text:
+                                                    " left of ${formatAmount(primaryGroup['groupBudget'])}",
+                                                style: TextStyle(
+                                                    color: CustomColors()
+                                                        .primaryTextColor))
+                                          ],
+                                          style: TextStyle(
+                                              // fontSize: 18,
+                                              color:
+                                                  CustomColors().secondaryColor)),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          LinearPercentIndicator(
-                            percent: getPercentile(),
-                            lineHeight: 18.0,
-                            barRadius: const Radius.circular(3),
-                            center: Text(
-                              "${double.parse(primaryGroup['currentAmountInPercent']) * 1}%",
-                              style:const TextStyle(fontSize: 12.0),
+                            const SizedBox(
+                              height: 10,
                             ),
-                            // trailing: Icon(Icons.mood),
-                            // linearStrokeCap: LinearStrokeCap.roundAll,
-                            backgroundColor: Colors.grey,
-                            progressColor: Colors.white,
-                          ),
-                          // const SizedBox(height: 10,),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: RichText(
-                              text: TextSpan(children: [
-                                TextSpan(
-                                    text: "You can spend ",
-                                    style: TextStyle(
-                                        color:
-                                            CustomColors().primaryTextColor)),
-                                TextSpan(
-                                    text:
-                                        "${(double.parse(primaryGroup['currentAmount']) / daysLeftInMonth).toStringAsFixed(1)}/day ",
-                                    style: TextStyle(
-                                        color: CustomColors().primaryTextColor,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold)),
-                                TextSpan(
-                                    text: "for $daysLeftInMonth days",
-                                    style: TextStyle(
-                                        color: CustomColors().primaryTextColor))
-                              ]),
+                            LinearPercentIndicator(
+                              percent: getPercentile(),
+                              lineHeight: 18.0,
+                              barRadius: const Radius.circular(3),
+                              center: Text(
+                                "${double.parse(primaryGroup['currentAmountInPercent']) * 1}%",
+                                style:const TextStyle(fontSize: 12.0),
+                              ),
+                              // trailing: Icon(Icons.mood),
+                              // linearStrokeCap: LinearStrokeCap.roundAll,
+                              backgroundColor: Colors.grey,
+                              progressColor: Colors.white,
                             ),
-                          )
-                        ],
+                            // const SizedBox(height: 10,),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: RichText(
+                                text: TextSpan(children: [
+                                  TextSpan(
+                                      text: "You can spend ",
+                                      style: TextStyle(
+                                          color:
+                                              CustomColors().primaryTextColor)),
+                                  TextSpan(
+                                      text:
+                                          "${(double.parse(primaryGroup['currentAmount']) / daysLeftInMonth).toStringAsFixed(1)}/day ",
+                                      style: TextStyle(
+                                          color: CustomColors().primaryTextColor,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold)),
+                                  TextSpan(
+                                      text: "for $daysLeftInMonth days",
+                                      style: TextStyle(
+                                          color: CustomColors().primaryTextColor))
+                                ]),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                : SizedBox(),
-            const SizedBox(
-              height: 10,
-            ),
-            const TransactionTabs(),
-            // TabBarView( children: [AllTransactions(), Expense(), Income()])
-          ],
+                    )
+                  : SizedBox(),
+              const SizedBox(
+                height: 10,
+              ),
+              const TransactionTabs(),
+              // TabBarView( children: [AllTransactions(), Expense(), Income()])
+            ],
+          ),
         ),
+        floatingActionButton: AddTransactionBtn(),
       ),
-      floatingActionButton: AddTransactionBtn(),
     );
   }
 
