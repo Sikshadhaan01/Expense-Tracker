@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:expense_tracker/components/add_transaction_btn.dart';
 import 'package:expense_tracker/configs/CustomColors.dart';
 import 'package:expense_tracker/pages/homepage.dart';
+import 'package:expense_tracker/services/transaction_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TransactionPage extends StatefulWidget {
   const TransactionPage({super.key});
@@ -17,38 +21,13 @@ class _TransactionPageState extends State<TransactionPage>
   List dateList = [];
   late final TabController _controller;
   int _selectedIndex = 0;
-  List transactions = [
-    {
-      "transactionType": "Expense",
-      "transactionAmount": 1000,
-      "transactionName": "Internet Bill"
-    },
-    {
-      "transactionType": "Expense",
-      "transactionAmount": 1000,
-      "transactionName": "Electricity Bill"
-    },
-    {
-      "transactionType": "Income",
-      "transactionAmount": 2000,
-      "transactionName": "Interest"
-    },
-    {
-      "transactionType": "Income",
-      "transactionAmount": 500,
-      "transactionName": "Other"
-    },
-    {
-      "transactionType": "Expense",
-      "transactionAmount": 1000,
-      "transactionName": "Entertainment"
-    },
-  ];
+  List transactions = [];
 
   @override
   void initState() {
     super.initState();
     initializeTabs();
+    getUserInfo();
   }
 
   @override
@@ -70,7 +49,10 @@ class _TransactionPageState extends State<TransactionPage>
                               children: [
                                 Text(
                                   date['month'],
-                                  style: TextStyle(color: CustomColors().primaryColor, letterSpacing: 2, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      color: CustomColors().primaryColor,
+                                      letterSpacing: 2,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(date['year'])
                               ],
@@ -81,10 +63,12 @@ class _TransactionPageState extends State<TransactionPage>
               ),
               title: const Text('Transactions'),
             ),
-            body: TabBarView(
+            body: transactions.isNotEmpty ? TabBarView(
               controller: _controller,
-              children: dateList.map((e) => TransactionListTile(transactions: transactions)).toList(),
-            ),
+              children: dateList
+                  .map((e) => TransactionListTile(transactions: transactions))
+                  .toList(),
+            ) :const Center(child: Text("No transactions found"),),
             floatingActionButton: AddTransactionBtn(),
           )
         : CircularProgressIndicator(
@@ -110,19 +94,21 @@ class _TransactionPageState extends State<TransactionPage>
       "December"
     ];
     DateTime currentDate = startDate;
-    
+
     // DateTime endDate = DateTime.now();
 
     while (currentDate.isBefore(endDate)) {
       // debugPrint(currentDate.month.toString());
       Map<String, String> yearMonth = {
         "year": currentDate.year.toString(),
-        "month": months[currentDate.month - 1]
+        "month": months[currentDate.month - 1],
+        "monthIndex": (currentDate.month - 1).toString()
       };
       yearMonthList.add(yearMonth);
-      if(currentDate.year ==  DateTime.now().year && currentDate.month == DateTime.now().month){
-        debugPrint("Current date"+currentDate.toString());
-        _selectedIndex = yearMonthList.length-1;
+      if (currentDate.year == DateTime.now().year &&
+          currentDate.month == DateTime.now().month) {
+        debugPrint("Current date" + currentDate.toString());
+        _selectedIndex = yearMonthList.length - 1;
       }
 
       // Move to the next month
@@ -132,13 +118,44 @@ class _TransactionPageState extends State<TransactionPage>
     return yearMonthList;
   }
 
-  initializeTabs(){
-     generateYearMonthList(DateTime(2024, 3, 10), DateTime(2030, 3, 10))
+  initializeTabs() {
+    generateYearMonthList(DateTime(2024, 3, 10), DateTime(2030, 3, 10))
         .then((value) {
       setState(() {
         dateList = value;
       });
-      _controller = TabController(length: dateList.length, vsync: this, initialIndex: _selectedIndex);
+      _controller = TabController(
+          length: dateList.length, vsync: this, initialIndex: _selectedIndex);
+    _controller.addListener(getTransaction);
     });
+  }
+
+  getTransaction() async {
+    var selectedMonthAndYear = dateList[_controller.index+1];
+    var obj = {
+      "month": "${selectedMonthAndYear['monthIndex']}",
+      "year": "${selectedMonthAndYear['year']}",
+      "userId": "${userInfo['id']}",
+      "transType": ""
+    };
+    var response = await TransactionService().getUserTransactions(obj);
+     setState(() {
+      transactions = response['result'];
+    });
+  }
+
+  var userInfo;
+  getUserInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    userInfo = json.decode(prefs.getString("userInfo")!);
+    getTransaction();
+  }
+
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _controller.dispose();
+    super.dispose();
   }
 }

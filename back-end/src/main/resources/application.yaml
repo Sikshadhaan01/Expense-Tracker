@@ -21,9 +21,9 @@ spring:
     servlet:
       content-type: text/html
   datasource:
-    url: jdbc:mysql://localhost:3306/expensetracker
-    username: root
-    password: root
+    url: jdbc:mysql://15.207.146.31:3306/expense_tracker
+    username: nit_user
+    password: nit1234
     #    url: jdbc:mysql://localhost:3306/true_image
     #    username: trueImageAdmin
     #    password: TrueImage$2023

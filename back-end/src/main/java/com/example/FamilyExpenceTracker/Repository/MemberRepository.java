@@ -1,6 +1,5 @@
 package com.example.FamilyExpenceTracker.Repository;
 
-import com.example.FamilyExpenceTracker.Entity.FamilyEntity;
 import com.example.FamilyExpenceTracker.Entity.MemberEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

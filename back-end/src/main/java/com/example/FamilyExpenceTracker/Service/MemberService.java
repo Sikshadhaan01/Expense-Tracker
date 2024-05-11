@@ -1,6 +1,5 @@
 package com.example.FamilyExpenceTracker.Service;
 
-import com.example.FamilyExpenceTracker.Entity.FamilyEntity;
 import com.example.FamilyExpenceTracker.Entity.MemberEntity;
 import com.example.FamilyExpenceTracker.Repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;

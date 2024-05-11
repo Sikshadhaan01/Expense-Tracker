@@ -1,6 +1,14 @@
+import 'dart:convert';
+
+import 'package:expense_tracker/services/group_service.dart';
+import 'package:expense_tracker/services/user_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:multi_select_flutter/bottom_sheet/multi_select_bottom_sheet.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddGroup extends StatelessWidget {
   const AddGroup({super.key});
@@ -15,7 +23,7 @@ class AddGroup extends StatelessWidget {
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               color: Colors.black,
-              onPressed: () => context.go("/budgetspage"),
+              onPressed: () => context.go("/"),
             ),
             bottom: const TabBar(tabs: [
               Tab(
@@ -38,6 +46,15 @@ class AddGroup extends StatelessWidget {
   }
 }
 
+enum Options {
+  blue('Yes'),
+  pink('No');
+
+  const Options(this.label);
+  final String label;
+  // final Color color;
+}
+
 class AddMember extends StatefulWidget {
   const AddMember({super.key});
 
@@ -46,53 +63,143 @@ class AddMember extends StatefulWidget {
 }
 
 class _AddMemberState extends State<AddMember> {
- 
- 
+  TextEditingController groupNameController = TextEditingController();
+  TextEditingController groupBudgetController = TextEditingController();
+  bool isPrimary = false;
+
+  List _selectedMembers = [];
+  static List allMembers = [];
+  List<MultiSelectItem<Object?>> _items = allMembers
+      .map((member) => MultiSelectItem(member, member["userName"]))
+      .toList();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getAllMembers();
+  }
+
+  getAllMembers() async {
+    var response = await UserService().getAllUsers();
+    setState(() {
+      allMembers = response['result'][0];
+      _items = allMembers
+          .map((member) => MultiSelectItem(member, member["userName"]))
+          .toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
             child: TextField(
-              decoration: InputDecoration(labelText: "Group Name"),
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 100,
-                  child: TextField(
-                    decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.currency_rupee),
-                        hintText: "Budget"),
-                  ),
-                ),
-              ],
+              controller: groupNameController,
+              decoration: const InputDecoration(labelText: "Group Name"),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              decoration: InputDecoration(
-                  labelText: "Add member",
-                  suffixIcon:
-                      IconButton(onPressed: () {
-                        showSearch(
-                context: context,
-                delegate: SearchField()
-              );
-                        
-                      }, icon: const Icon(Icons.search))),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: groupBudgetController,
+                    decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.currency_rupee),
+                        hintText: "Budget"),
+                  ),
+                ),
+                Expanded(
+                    child: Column(
+                  children: [
+                    const Text("Primary", style: TextStyle(fontSize: 12),),
+                    Checkbox(
+                      onChanged: (value) {
+                        setState(() {
+                          isPrimary = value! ? value : false;
+                        });
+                      },
+                      value: isPrimary,
+                    ),
+                  ],
+                )),
+              ],
             ),
           ),
-          ElevatedButton(onPressed: () {}, child: const Icon(Icons.check))
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: MultiSelectBottomSheetField(
+              buttonText: const Text("Add Members"),
+              buttonIcon: const Icon(Icons.people_outlined),
+              title: const Text("Select Members"),
+              initialChildSize: 0.8,
+              listType: MultiSelectListType.LIST,
+              searchable: true,
+              items: _items,
+              // initialValue: [],
+              onConfirm: (values) {
+                _selectedMembers = values;
+              },
+              maxChildSize: 0.8,
+              chipDisplay: MultiSelectChipDisplay(
+                onTap: (value) {
+                  setState(() {
+                    _selectedMembers.remove(value);
+                  });
+                },
+              ),
+            ),
+          ),
+          // Padding(
+          //   padding: const EdgeInsets.all(16.0),
+          //   child: TextField(
+          //     decoration: InputDecoration(
+          //         labelText: "Add member",
+          //         suffixIcon: IconButton(
+          //             onPressed: () {
+          //               showSearch(context: context, delegate: SearchField());
+          //             },
+          //             icon: const Icon(Icons.search))),
+          //   ),
+          // ),
+          ElevatedButton(
+              onPressed: () {
+                saveGroup();
+              },
+              child: const Icon(Icons.check))
         ],
       ),
     );
+  }
+
+  saveGroup() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var userInfo = jsonDecode(prefs.getString('userInfo')!);
+    var obj = {
+      "groupName": groupNameController.text,
+      "groupBudget": groupBudgetController.text,
+      "members": _selectedMembers,
+      "currentAmount": groupBudgetController.text,
+      "isPrimary": isPrimary ? "Y" : "N",
+      "userId": userInfo['id']
+    };
+    var response = await GroupService().saveGroup(obj);
+    if (response["statusCode"] == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Group Created"),
+        backgroundColor: Colors.green,
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Something went wrong"),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 }
 
@@ -133,8 +240,9 @@ class _MembersListState extends State<MembersList> {
     );
   }
 }
+
 class SearchField extends SearchDelegate {
-  List<String> listof = ['jineesh','saran','prajith'];
+  List<String> listof = ['jineesh', 'saran', 'prajith'];
   @override
   List<Widget>? buildActions(BuildContext context) {
     return [
@@ -146,8 +254,7 @@ class SearchField extends SearchDelegate {
       ),
     ];
   }
- 
-  
+
   @override
   Widget? buildLeading(BuildContext context) {
     return IconButton(
@@ -157,8 +264,7 @@ class SearchField extends SearchDelegate {
       icon: const Icon(Icons.arrow_back),
     );
   }
- 
-  
+
   @override
   Widget buildResults(BuildContext context) {
     List<String> matchQuery = [];
@@ -177,8 +283,7 @@ class SearchField extends SearchDelegate {
       },
     );
   }
- 
-  
+
   @override
   Widget buildSuggestions(BuildContext context) {
     List<String> matchQuery = [];

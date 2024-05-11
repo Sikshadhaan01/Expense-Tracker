@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:expense_tracker/pages/homepage.dart';
 import 'package:expense_tracker/services/user_service.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -139,7 +142,9 @@ class _LoginFormState extends State<LoginForm> {
                 var response = await UserService().login(jsonObj);
                 print(response);
                 if (response['message'] == 'Login Success') {
-                  context.go('/');
+                  final SharedPreferences prefs = await SharedPreferences.getInstance();
+                  prefs.setString("userInfo", json.encode(response['result'][0]));
+                  context.push('/');
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

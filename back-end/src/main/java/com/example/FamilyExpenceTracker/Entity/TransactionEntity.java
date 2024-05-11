@@ -1,6 +1,7 @@
 package com.example.FamilyExpenceTracker.Entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
@@ -11,12 +12,74 @@ public class TransactionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "transaction_name")
-    private String tName;
+    @Column(name = "transaction_type")
+    private String transactionType;
     @Column(name = "money")
-    private String money;
-    @Column(name = "day")
-    private Date day;
+    private String amount;
+    @Column(name = "day", insertable = false, updatable = false)
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date date;
+    @Column(name = "user_id")
+    private String userId;
+    @Column(name = "group_id")
+    private Long groupId;
+    @Column(name = "category_icon")
+    private String categoryIcon;
+    @Column(name = "category_name")
+    private String categoryName;
+    @Column(name = "month")
+    private String month;
+    @Column(name = "year")
+    private String year;
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(String month) {
+        this.month = month;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public String getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(String transactionType) {
+        this.transactionType = transactionType;
+    }
+
+    public String getCategoryIcon() {
+        return categoryIcon;
+    }
+
+    public void setCategoryIcon(String categoryIcon) {
+        this.categoryIcon = categoryIcon;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
 
     public Long getId() {
         return id;
@@ -26,27 +89,35 @@ public class TransactionEntity {
         this.id = id;
     }
 
-    public String gettName() {
-        return tName;
+    public String getTransactionName() {
+        return transactionType;
     }
 
-    public void settName(String tName) {
-        this.tName = tName;
+    public void setTransactionName(String transactionType) {
+        this.transactionType = transactionType;
     }
 
-    public String getMoney() {
-        return money;
+    public String getAmount() {
+        return amount;
     }
 
-    public void setMoney(String money) {
-        this.money = money;
+    public void setAmount(String amount) {
+        this.amount = amount;
     }
 
-    public Date getDay() {
-        return day;
+    public Date getDate() {
+        return date;
     }
 
-    public void setDay(Date day) {
-        this.day = day;
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

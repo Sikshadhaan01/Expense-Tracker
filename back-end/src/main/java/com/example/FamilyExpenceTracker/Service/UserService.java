@@ -1,7 +1,5 @@
 package com.example.FamilyExpenceTracker.Service;
 
-import com.example.FamilyExpenceTracker.Data.Response;
-import com.example.FamilyExpenceTracker.Entity.FamilyEntity;
 import com.example.FamilyExpenceTracker.Entity.UserEntity;
 import com.example.FamilyExpenceTracker.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +20,17 @@ public class UserService {
             return ("Name id already exist");
         }
     }
-    public String LogIn(UserEntity login) {
+    public UserEntity LogIn(UserEntity login) {
         UserEntity foundUser =userRepository.login(login.getEmail(), login.getPass());
         if (foundUser != null) {
-            return ("Login Success");
+            return foundUser;
 
         } else {
-            return ("Login Failed");
+            return null;
         }
+    }
+
+    public List<UserEntity> getAll() {
+        return userRepository.findAll();
     }
 }

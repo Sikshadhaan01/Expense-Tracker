@@ -1,11 +1,27 @@
+import 'dart:convert';
+
 import 'package:expense_tracker/pages/homepage.dart';
+import 'package:expense_tracker/services/group_service.dart';
+import 'package:expense_tracker/services/transaction_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class AddTransactionBtn extends StatelessWidget {
+class AddTransactionBtn extends StatefulWidget {
   AddTransactionBtn({super.key});
 
+  @override
+  State<AddTransactionBtn> createState() => _AddTransactionBtnState();
+}
+
+class _AddTransactionBtnState extends State<AddTransactionBtn> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getPrimaryGroup();
+  }
   List categoryImages = [
     {
       "imageUrl": "assets/icons8-internet-48.png",
@@ -124,161 +140,250 @@ class AddTransactionBtn extends StatelessWidget {
     );
   }
 
+  var selectedTransactionType = 'Expense';
+  List transTypes = ["Expense", "Income"];
+  TextEditingController _amountController = TextEditingController();
   openModelSheet(context) {
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
       builder: (context) {
-        return Wrap(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: const Color(0xffc9f9ff)),
-              //  height: 500,
-              width: double.infinity,
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  const Text(
-                    "Add Transaction",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                  ),
-                  const SizedBox(height: 15),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ChoiceChip(
-                        label: const Text("Expense"),
-                        labelStyle: const TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.white),
-                        selected: false,
-                        backgroundColor:
-                            const Color.fromARGB(255, 149, 168, 183),
-                        onSelected: (bool value) {},
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      ChoiceChip(
-                        label: const Text("Income"),
-                        labelStyle: const TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.white),
-                        selected: false,
-                        backgroundColor:
-                            const Color.fromARGB(255, 149, 168, 183),
-                        onSelected: (bool value) {},
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Container(
+        return StatefulBuilder(
+          builder: (context2, setState) {
+            return Scaffold(
+              body: Padding(
+                padding: MediaQuery.of(context).viewInsets,
+                child: Wrap(
+                  children: [
+                    Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black12,
-                            spreadRadius: 1,
-                            blurRadius: 3,
+                          borderRadius: BorderRadius.circular(10),
+                          color: const Color(0xffc9f9ff)),
+                      //  height: 500,
+                      width: double.infinity,
+                      child: Column(
+                        children: [
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              GestureDetector(
+                                  onTap: () {
+                                    Navigator.pop(context2);
+                                  },
+                                  child: Icon(Icons.arrow_back)),
+                              const Text(
+                                "Add Transaction",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20),
+                              ),
+                              SizedBox()
+                            ],
+                          ),
+                          const SizedBox(height: 15),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: transTypes.map((type) {
+                              // return GestureDetector(
+                              //   onTap:() {
+                              //     setState(() {
+                              //       selectedTransactionType = type;
+                              //     });
+                              //   },
+                              //   child: Text(type,style: TextStyle(color: selectedTransactionType=="Expense" ? Colors.red : Colors.green ),));
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 10),
+                                child: ChoiceChip(
+                                  label: Text(type),
+                                  // labelStyle: const TextStyle(
+                                  //     fontWeight: FontWeight.bold, color: Colors.white),
+                                  selected: selectedTransactionType == type,
+                                  selectedColor:
+                                      selectedTransactionType == "Expense"
+                                          ? Colors.red
+                                          : Colors.green,
+                                  // backgroundColor:
+                                  //     const Color.fromARGB(255, 149, 168, 183),
+                                  onSelected: (bool selected) {
+                                    setState(() {
+                                      selectedTransactionType = type;
+                                    });
+                                    debugPrint(selectedTransactionType);
+                                  },
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    spreadRadius: 1,
+                                    blurRadius: 3,
+                                  ),
+                                ],
+                              ),
+                              // child: const TextField(
+                              //   decoration: InputDecoration(
+                              //       contentPadding: EdgeInsets.only(left: 5),
+                              //       hintText: "Title",
+                              //       hintStyle: TextStyle(
+                              //           color: Color.fromARGB(255, 149, 164, 192)),
+                              //       border: InputBorder.none),
+                              // ),
+                            ),
+                          ),
+                          selectedCategory != null
+                              ? Text(selectedCategory?['categoryName'])
+                              : Text(''),
+                          Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    height: 50.0,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: Colors.black12,
+                                          spreadRadius: 1,
+                                          blurRadius: 3,
+                                        ),
+                                      ],
+                                    ),
+                                    child: TextField(
+                                      controller: _amountController,
+                                      textAlign: TextAlign.center,
+                                      decoration: const InputDecoration(
+                                          contentPadding:
+                                              EdgeInsets.only(top: 5),
+                                          hintText: "Amount",
+                                          hintStyle: TextStyle(
+                                              color: Color.fromARGB(
+                                                  255, 149, 164, 192)),
+                                          border: InputBorder.none),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    height: 50,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        // Navigator.pop(context);
+                                        openModelSheet1(context);
+                                      },
+                                      child: const Text("Select Category"),
+                                      style: ButtonStyle(
+                                          shape: MaterialStateProperty.all<
+                                                  RoundedRectangleBorder>(
+                                              RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ))),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              // width: 300,
+                              height: 40,
+                              child: ElevatedButton(
+                                onPressed: ()async {
+                                  var prefs = await SharedPreferences.getInstance();
+                                  var userInfo = json.decode(prefs.getString("userInfo")!);
+                                  print('User Info'+ userInfo.toString());
+
+                                  var obj = {
+                                    "amount": _amountController.text,
+                                    "transactionType": selectedTransactionType,
+                                    "categoryName":
+                                        selectedCategory?['categoryName'],
+                                    "categoryIcon":
+                                        selectedCategory?['imageUrl'],
+                                    "userId":userInfo['id'],
+                                    "groupId":primaryGroup['id'],
+                                    "month": DateTime.now().month.toString(),
+                                    "year":DateTime.now().year.toString()
+                                  };
+                                  var error = validateTransactionObj(obj);
+                                  if (error != null) {
+                                    ScaffoldMessenger.of(context2)
+                                        .showSnackBar(SnackBar(
+                                      content: Text(error),
+                                      backgroundColor: Colors.red,
+                                      behavior: SnackBarBehavior.floating,
+                                    ));
+                                    return;
+                                  }
+                                  var response = TransactionService().saveTransaction(obj);
+
+                                  print("Response "+response.toString());
+                                },
+                                child: const Icon(Icons.check),
+                                style: ButtonStyle(
+                                    shape: MaterialStateProperty.all<
+                                            RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ))),
+                              ),
+                            ),
                           ),
                         ],
                       ),
-                      // child: const TextField(
-                      //   decoration: InputDecoration(
-                      //       contentPadding: EdgeInsets.only(left: 5),
-                      //       hintText: "Title",
-                      //       hintStyle: TextStyle(
-                      //           color: Color.fromARGB(255, 149, 164, 192)),
-                      //       border: InputBorder.none),
-                      // ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Expanded(
-                          child: Container(
-                            height: 50.0,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  spreadRadius: 1,
-                                  blurRadius: 3,
-                                ),
-                              ],
-                            ),
-                            child: const TextField(
-                              textAlign: TextAlign.center,
-                              decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.only(top: 5),
-                                  hintText: "Amount",
-                                  hintStyle: TextStyle(
-                                      color:
-                                          Color.fromARGB(255, 149, 164, 192)),
-                                  border: InputBorder.none),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Expanded(
-                          child: Container(
-                            height: 50,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                openModelSheet1(context);
-                              },
-                              child: Text("Select Category"),
-                              style: ButtonStyle(
-                                  shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ))),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      // width: 300,
-                      height: 40,
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        child: Icon(Icons.check),
-                        style: ButtonStyle(
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ))),
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            );
+          },
         );
       },
     );
   }
+
+  validateTransactionObj(obj) {
+    if (obj['amount'] == "") {
+      return "Amount is required";
+    }
+    if (obj['categoryName'] == null) {
+      return "Please select a category";
+    }
+    return null;
+  }
+
+   var primaryGroup;
+  getPrimaryGroup() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var userInfo = jsonDecode(prefs.getString("userInfo")!);
+    var response = await GroupService().getPrimaryGroup(userInfo['id']);
+    setState(() {
+      primaryGroup = response['result'][0];
+    });
+  }
+
 
   var selectedCategory;
 
@@ -333,7 +438,9 @@ class AddTransactionBtn extends StatelessWidget {
                       children: categoryImages.map((e) {
                         return GestureDetector(
                           onTap: () {
-                            selectedCategory = e;
+                            setState(() {
+                              selectedCategory = e;
+                            });
                             Navigator.pop(context);
                           },
                           child: Column(

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -17,9 +18,11 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 1, milliseconds: 0), () {
-      var userId = "loggedout";
-      if (userId == "logged") {
+    Timer(const Duration(seconds: 1, milliseconds: 0), ()async {
+      SharedPreferences prefs =await SharedPreferences.getInstance();
+      var userInfo = prefs.getString("userInfo");
+      var userId = "logged";
+      if (userInfo != null) {
         // ignore: use_build_context_synchronously
         context.pushReplacement("/");
       } else {

@@ -1,9 +1,15 @@
+import 'dart:convert';
+
 import 'package:expense_tracker/components/add_transaction_btn.dart';
 import 'package:expense_tracker/configs/CustomColors.dart';
+import 'package:expense_tracker/services/group_service.dart';
+import 'package:expense_tracker/services/transaction_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -20,6 +26,7 @@ class _HomepageState extends State<Homepage> {
   void initState() {
     // TODO: implement initState
     setDaysLeftInMonth();
+    getPrimaryGroup();
     super.initState();
   }
 
@@ -31,6 +38,17 @@ class _HomepageState extends State<Homepage> {
     });
   }
 
+  var primaryGroup;
+  getPrimaryGroup() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var userInfo = jsonDecode(prefs.getString("userInfo")!);
+    var response = await GroupService().getPrimaryGroup(userInfo['id']);
+    setState(() {
+      primaryGroup = response['result'][0];
+    });
+    print("primary " + primaryGroup.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,112 +56,129 @@ class _HomepageState extends State<Homepage> {
         physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                "Home",
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Home",
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2),
+                  ),
+                  GestureDetector(
+                      onTap: () {
+                        logout();
+                      },
+                      child: const Icon(Icons.logout))
+                ],
               ),
             ),
-            Card(
-              color: CustomColors().primaryColor,
-              // elevation: 8,
-              child: Container(
-                height: 150,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    border: Border.all(
-                        color: CustomColors().secondaryColor, width: 3)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      color: CustomColors().secondaryColor,
+            primaryGroup != null
+                ? Card(
+                    color: CustomColors().primaryColor,
+                    // elevation: 8,
+                    child: Container(
+                      height: 150,
                       width: double.infinity,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Family Budget",
-                              style: TextStyle(
-                                  color: CustomColors().primaryTextColor,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1),
+                      decoration: BoxDecoration(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                          border: Border.all(
+                              color: CustomColors().secondaryColor, width: 3)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            color: CustomColors().secondaryColor,
+                            width: double.infinity,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    primaryGroup['groupName'],
+                                    style: TextStyle(
+                                        color: CustomColors().primaryTextColor,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 1),
+                                  ),
+                                  RichText(
+                                    text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                              text:
+                                                  "${formatAmount(primaryGroup['currentAmount'])}",
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  color: CustomColors()
+                                                      .primaryColor,
+                                                  fontWeight: FontWeight.bold)),
+                                          TextSpan(
+                                              text:
+                                                  " left of ${formatAmount(primaryGroup['groupBudget'])}",
+                                              style: TextStyle(
+                                                  color: CustomColors()
+                                                      .primaryTextColor))
+                                        ],
+                                        style: TextStyle(
+                                            // fontSize: 18,
+                                            color:
+                                                CustomColors().secondaryColor)),
+                                  )
+                                ],
+                              ),
                             ),
-                            RichText(
-                              text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                        text: "${formatAmount(currentAmount)}",
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            color: CustomColors().primaryColor,
-                                            fontWeight: FontWeight.bold)),
-                                    TextSpan(
-                                        text:
-                                            " left of ${formatAmount(budgetTotal)}",
-                                        style: TextStyle(
-                                            color: CustomColors()
-                                                .primaryTextColor))
-                                  ],
-                                  style: TextStyle(
-                                      // fontSize: 18,
-                                      color: CustomColors().secondaryColor)),
-                            )
-                          ],
-                        ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          LinearPercentIndicator(
+                            percent: getPercentile(),
+                            lineHeight: 18.0,
+                            barRadius: const Radius.circular(3),
+                            center: Text(
+                              "${double.parse(primaryGroup['currentAmountInPercent']) * 1}%",
+                              style:const TextStyle(fontSize: 12.0),
+                            ),
+                            // trailing: Icon(Icons.mood),
+                            // linearStrokeCap: LinearStrokeCap.roundAll,
+                            backgroundColor: Colors.grey,
+                            progressColor: Colors.white,
+                          ),
+                          // const SizedBox(height: 10,),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: RichText(
+                              text: TextSpan(children: [
+                                TextSpan(
+                                    text: "You can spend ",
+                                    style: TextStyle(
+                                        color:
+                                            CustomColors().primaryTextColor)),
+                                TextSpan(
+                                    text:
+                                        "${(double.parse(primaryGroup['currentAmount']) / daysLeftInMonth).toStringAsFixed(1)}/day ",
+                                    style: TextStyle(
+                                        color: CustomColors().primaryTextColor,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold)),
+                                TextSpan(
+                                    text: "for $daysLeftInMonth days",
+                                    style: TextStyle(
+                                        color: CustomColors().primaryTextColor))
+                              ]),
+                            ),
+                          )
+                        ],
                       ),
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    LinearPercentIndicator(
-                      percent: 0.5,
-                      lineHeight: 18.0,
-                      barRadius: const Radius.circular(3),
-                      center: const Text(
-                        "50.0%",
-                        style: TextStyle(fontSize: 12.0),
-                      ),
-                      // trailing: Icon(Icons.mood),
-                      // linearStrokeCap: LinearStrokeCap.roundAll,
-                      backgroundColor: Colors.grey,
-                      progressColor: Colors.white,
-                    ),
-                    // const SizedBox(height: 10,),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: RichText(
-                        text: TextSpan(children: [
-                          TextSpan(
-                              text: "You can spend ",
-                              style: TextStyle(
-                                  color: CustomColors().primaryTextColor)),
-                          TextSpan(
-                              text:
-                                  "${(currentAmount / daysLeftInMonth).toStringAsFixed(1)}/day ",
-                              style: TextStyle(
-                                  color: CustomColors().primaryTextColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold)),
-                          TextSpan(
-                              text: "for $daysLeftInMonth days",
-                              style: TextStyle(
-                                  color: CustomColors().primaryTextColor))
-                        ]),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
+                  )
+                : SizedBox(),
             const SizedBox(
               height: 10,
             ),
@@ -152,13 +187,23 @@ class _HomepageState extends State<Homepage> {
           ],
         ),
       ),
-      floatingActionButton:  AddTransactionBtn(),
+      floatingActionButton: AddTransactionBtn(),
     );
   }
 
-  formatAmount(double amount) {
+  formatAmount(String amount) {
     return NumberFormat.currency(locale: 'hi-IN', decimalDigits: 0, name: "")
-        .format(amount);
+        .format(double.parse(amount));
+  }
+
+  getPercentile() {
+    return double.parse(primaryGroup['currentAmountInPercent']) / 100;
+  }
+
+  logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+    context.pushReplacement('/login');
   }
 }
 
@@ -194,7 +239,7 @@ class TransactionTabs extends StatelessWidget {
 }
 
 class TransactionListTile extends StatelessWidget {
- final List transactions;
+  final List transactions;
   const TransactionListTile({super.key, required this.transactions});
 
   formatAmount(double amount) {
@@ -213,7 +258,7 @@ class TransactionListTile extends StatelessWidget {
             child: Icon(Icons.money),
           ),
           title: Text(
-            transactions[index]['transactionName'].toString(),
+            transactions[index]['categoryName'].toString(),
             style: const TextStyle(fontSize: 14),
           ),
           trailing: RichText(
@@ -230,7 +275,7 @@ class TransactionListTile extends StatelessWidget {
                   ),
                   TextSpan(
                       text: formatAmount(
-                          transactions[index]['transactionAmount'])),
+                          double.parse(transactions[index]['amount']))),
                 ]),
           ),
         );
@@ -249,33 +294,32 @@ class AllTransactions extends StatefulWidget {
 }
 
 class _AllTransactionsState extends State<AllTransactions> {
-  List transactions = [
-    {
-      "transactionType": "Expense",
-      "transactionAmount": 1000,
-      "transactionName": "Internet Bill"
-    },
-    {
-      "transactionType": "Expense",
-      "transactionAmount": 1000,
-      "transactionName": "Electricity Bill"
-    },
-    {
-      "transactionType": "Income",
-      "transactionAmount": 2000,
-      "transactionName": "Interest"
-    },
-    {
-      "transactionType": "Income",
-      "transactionAmount": 500,
-      "transactionName": "Other"
-    },
-    {
-      "transactionType": "Expense",
-      "transactionAmount": 1000,
-      "transactionName": "Entertainment"
-    },
-  ];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getTransactions();
+  }
+
+  getTransactions() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var userInfo = json.decode(prefs.getString("userInfo")!);
+    var currentDate = DateTime.now();
+    var obj = {
+      "month": "${currentDate.month}",
+      "year": "${currentDate.year}",
+      "userId": "${userInfo['id']}",
+      "transType": ""
+    };
+
+    var response = await TransactionService().getUserTransactions(obj);
+    print(response.toString());
+    setState(() {
+      transactions = response['result'];
+    });
+  }
+
+  List transactions = [];
 
   @override
   Widget build(BuildContext context) {
@@ -293,23 +337,31 @@ class Expense extends StatefulWidget {
 }
 
 class _ExpenseState extends State<Expense> {
-  List transactions = [
-    {
-      "transactionType": "Expense",
-      "transactionAmount": 1000,
-      "transactionName": "Internet Bill"
-    },
-    {
-      "transactionType": "Expense",
-      "transactionAmount": 1000,
-      "transactionName": "Electricity Bill"
-    },
-    {
-      "transactionType": "Expense",
-      "transactionAmount": 1000,
-      "transactionName": "Entertainment"
-    },
-  ];
+  List transactions = [];
+
+  getTransactions() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var userInfo = json.decode(prefs.getString("userInfo")!);
+    var currentDate = DateTime.now();
+    var obj = {
+      "month": "${currentDate.month}",
+      "year": "${currentDate.year}",
+      "userId": "${userInfo['id']}",
+      "transType": "Expense"
+    };
+
+    var response = await TransactionService().getUserTransactions(obj);
+    setState(() {
+      transactions = response['result'];
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getTransactions();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -327,18 +379,30 @@ class Income extends StatefulWidget {
 }
 
 class _IncomeState extends State<Income> {
-  List transactions = [
-    {
-      "transactionType": "Income",
-      "transactionAmount": 2000,
-      "transactionName": "Interest"
-    },
-    {
-      "transactionType": "Income",
-      "transactionAmount": 500,
-      "transactionName": "Other"
-    },
-  ];
+  List transactions = [];
+
+  getTransactions() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var userInfo = json.decode(prefs.getString("userInfo")!);
+    var currentDate = DateTime.now();
+    var obj = {
+      "month": "${currentDate.month}",
+      "year": "${currentDate.year}",
+      "userId": "${userInfo['id']}",
+      "transType": "Income"
+    };
+    var response = await TransactionService().getUserTransactions(obj);
+    setState(() {
+      transactions = response['result'];
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getTransactions();
+  }
 
   @override
   Widget build(BuildContext context) {

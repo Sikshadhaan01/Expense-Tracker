@@ -20,4 +20,11 @@ class UserService {
     var response = await dio.post(url, data: encode);
     return response.data;
   }
+
+  Future getAllUsers() async {
+    var url = baseUrl + "/users/get-all-users";
+    // var encode = jsonEncode(jsonObj);
+    var response = await dio.post(url);
+    return response.data;
+  }
 }

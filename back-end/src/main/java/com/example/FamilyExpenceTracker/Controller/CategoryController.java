@@ -1,7 +1,6 @@
 package com.example.FamilyExpenceTracker.Controller;
 
 import com.example.FamilyExpenceTracker.Entity.CategoryEntity;
-import com.example.FamilyExpenceTracker.Entity.FamilyEntity;
 import com.example.FamilyExpenceTracker.Service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

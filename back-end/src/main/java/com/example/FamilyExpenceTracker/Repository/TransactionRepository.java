@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<TransactionEntity,Long> {
-    @Query(value = "select * from transaction where transaction_name=:name", nativeQuery = true)
-    List<TransactionEntity> findUserByName(String name);
+    @Query(value = "select * from transaction where user_id=:id and month=:month and year=:year and transaction_type like %:transactionType", nativeQuery = true)
+    List<TransactionEntity> findTransactionByUser(String id, String month, String year, String transactionType);
 
     @Modifying
     @Transactional

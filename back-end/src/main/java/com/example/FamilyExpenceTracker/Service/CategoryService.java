@@ -1,7 +1,6 @@
 package com.example.FamilyExpenceTracker.Service;
 
 import com.example.FamilyExpenceTracker.Entity.CategoryEntity;
-import com.example.FamilyExpenceTracker.Entity.FamilyEntity;
 import com.example.FamilyExpenceTracker.Repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

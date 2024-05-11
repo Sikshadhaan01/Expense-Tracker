@@ -1,13 +1,13 @@
 package com.example.FamilyExpenceTracker.Controller;
 
 import com.example.FamilyExpenceTracker.Data.Response;
-import com.example.FamilyExpenceTracker.Entity.FamilyEntity;
 import com.example.FamilyExpenceTracker.Entity.UserEntity;
 import com.example.FamilyExpenceTracker.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -33,16 +33,35 @@ public class UserController {
     }
     @PostMapping(value = "login-user")
     public Response LogIn(@RequestBody UserEntity login) {
-        String message = userService.LogIn(login);
-        if (message.equals("Login Success")) {
+        UserEntity message = userService.LogIn(login);
+        if (message != null) {
             Response response = new Response();
-            response.setMessage(message);
+            response.setMessage("Login Success");
             response.setStatusCode(200);
-            response.setResult(new ArrayList<>());
+            response.setResult(List.of(message));
             return response;
         } else {
             Response response = new Response();
-            response.setMessage(message);
+            response.setMessage("Login Failed");
+            response.setStatusCode(400);
+            response.setResult(new ArrayList<>());
+            return response;
+        }
+    }
+
+
+    @PostMapping(value = "get-all-users")
+    public Response getAllUsers() {
+        List<UserEntity> message = userService.getAll();
+        if (message != null) {
+            Response response = new Response();
+            response.setMessage("Success");
+            response.setStatusCode(200);
+            response.setResult(List.of(message));
+            return response;
+        } else {
+            Response response = new Response();
+            response.setMessage("Failed");
             response.setStatusCode(400);
             response.setResult(new ArrayList<>());
             return response;

@@ -4,8 +4,17 @@ import java.util.List;
 
 public class Response {
 private String message;
-private Long statuscode;
-private List result;
+private int statusCode;
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
+    }
+
+    private List result;
 
     public String getMessage() {
         return message;
@@ -13,14 +22,6 @@ private List result;
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public Long getStatuscode() {
-        return statuscode;
-    }
-
-    public void setStatuscode(Long statuscode) {
-        this.statuscode = statuscode;
     }
 
     public List getResult() {
@@ -31,8 +32,5 @@ private List result;
         this.result = result;
     }
 
-    public void setStatusCode(int i) {
-        this.statuscode=statuscode;
-    }
 }
 
