@@ -47,59 +47,63 @@ class _BudgetPageState extends State<BudgetPage> {
   }
 
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                "Budget",
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2),
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            ListView.builder(
-              itemCount: groups.length,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return BudgetCard(
-                  groupDetails: groups[index],
-                  setAsPrimary: (){
-                    setAsPrimary(context, groups[index]);
-                  },
-                );
-              },
-            ),
-            //const TransactionTabs(),
-            // TabBarView( children: [AllTransactions(), Expense(), Income()])
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                height: 150,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  border: Border.all(
-                      color: CustomColors().secondaryColor, width: 3),
+    return SafeArea(
+      child: Scaffold(
+        body: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "Budget",
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2),
                 ),
-                child: IconButton(
-                    onPressed: () {
-                      context.go("/addgroup");
-                    },
-                    icon: Icon(Icons.add)),
               ),
-            )
-          ],
+              const SizedBox(
+                height: 10,
+              ),
+              ListView.builder(
+                itemCount: groups.length,
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                physics: BouncingScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return BudgetCard(
+                    groupDetails: groups[index],
+                    setAsPrimary: (){
+                      setAsPrimary(context, groups[index]);
+                    },
+                  );
+                },
+              ),
+              //const TransactionTabs(),
+              // TabBarView( children: [AllTransactions(), Expense(), Income()])
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  height: 150,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    border: Border.all(
+                        color: CustomColors().secondaryColor, width: 3),
+                  ),
+                  child: IconButton(
+                      onPressed: () {
+                        context.go("/addgroup");
+                      },
+                      icon: Icon(Icons.add)),
+                ),
+              )
+            ],
+          ),
         ),
+        floatingActionButton: AddTransactionBtn(),
       ),
-      floatingActionButton: AddTransactionBtn(),
     );
   }
   setAsPrimary(context , groupDetails)async{
