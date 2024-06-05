@@ -1,6 +1,6 @@
 package com.example.FamilyExpenceTracker.Entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import org.springframework.core.SpringVersion;
 
 @Entity

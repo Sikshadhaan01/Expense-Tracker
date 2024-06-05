@@ -1,6 +1,6 @@
 package com.example.FamilyExpenceTracker.Entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 @Entity
 @Table(name = "group_members")
 public class GroupMemberEntity {
@@ -16,13 +16,6 @@ public class GroupMemberEntity {
 //    @JoinColumn(name="group_id", nullable=false)
     private  Long groupId;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getUserName() {
         return userName;

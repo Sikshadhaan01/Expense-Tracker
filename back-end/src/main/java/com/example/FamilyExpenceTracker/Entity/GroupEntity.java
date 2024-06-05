@@ -1,6 +1,6 @@
 package com.example.FamilyExpenceTracker.Entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 import java.util.List;
 
@@ -24,8 +24,8 @@ public class GroupEntity {
     @Column(name = "current_amount")
     private String currentAmount;
 //    @Transient
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "id")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "group_id")
     private List<GroupMemberEntity> members;
 
     public String getCurrentAmount() {

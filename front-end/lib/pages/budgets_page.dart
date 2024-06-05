@@ -56,7 +56,7 @@ class _BudgetPageState extends State<BudgetPage> {
               const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Text(
-                  "Budget",
+                  "Groups & Budgets",
                   style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,

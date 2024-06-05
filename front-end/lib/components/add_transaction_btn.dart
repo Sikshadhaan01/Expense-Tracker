@@ -22,6 +22,7 @@ class _AddTransactionBtnState extends State<AddTransactionBtn> {
     super.initState();
     getPrimaryGroup();
   }
+
   List categoryImages = [
     {
       "imageUrl": "assets/icons8-internet-48.png",
@@ -130,7 +131,8 @@ class _AddTransactionBtnState extends State<AddTransactionBtn> {
     return FloatingActionButton(
       backgroundColor: const Color(0xFF1e3557),
       onPressed: () {
-        openModelSheet(context);
+        GoRouter.of(context).go('/addtransaction');
+        // openModelSheet(context);
       },
       child: const Icon(
         Icons.add,
@@ -142,6 +144,7 @@ class _AddTransactionBtnState extends State<AddTransactionBtn> {
 
   var selectedTransactionType = 'Expense';
   List transTypes = ["Expense", "Income"];
+  bool isLoading = false;
   TextEditingController _amountController = TextEditingController();
   openModelSheet(context) {
     showModalBottomSheet(
@@ -150,211 +153,186 @@ class _AddTransactionBtnState extends State<AddTransactionBtn> {
       builder: (context) {
         return StatefulBuilder(
           builder: (context2, setState) {
-            return Scaffold(
-              body: Padding(
-                padding: MediaQuery.of(context).viewInsets,
-                child: Wrap(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: const Color(0xffc9f9ff)),
-                      //  height: 500,
-                      width: double.infinity,
-                      child: Column(
-                        children: [
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              GestureDetector(
-                                  onTap: () {
-                                    Navigator.pop(context2);
-                                  },
-                                  child: Icon(Icons.arrow_back)),
-                              const Text(
-                                "Add Transaction",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 20),
-                              ),
-                              SizedBox()
-                            ],
-                          ),
-                          const SizedBox(height: 15),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: transTypes.map((type) {
-                              // return GestureDetector(
-                              //   onTap:() {
-                              //     setState(() {
-                              //       selectedTransactionType = type;
-                              //     });
-                              //   },
-                              //   child: Text(type,style: TextStyle(color: selectedTransactionType=="Expense" ? Colors.red : Colors.green ),));
-                              return Padding(
-                                padding: const EdgeInsets.only(right: 10),
-                                child: ChoiceChip(
-                                  label: Text(type),
-                                  // labelStyle: const TextStyle(
-                                  //     fontWeight: FontWeight.bold, color: Colors.white),
-                                  selected: selectedTransactionType == type,
-                                  selectedColor:
-                                      selectedTransactionType == "Expense"
-                                          ? Colors.red
-                                          : Colors.green,
-                                  // backgroundColor:
-                                  //     const Color.fromARGB(255, 149, 168, 183),
-                                  onSelected: (bool selected) {
-                                    setState(() {
-                                      selectedTransactionType = type;
-                                    });
-                                    debugPrint(selectedTransactionType);
-                                  },
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Colors.black12,
-                                    spreadRadius: 1,
-                                    blurRadius: 3,
-                                  ),
-                                ],
-                              ),
-                              // child: const TextField(
-                              //   decoration: InputDecoration(
-                              //       contentPadding: EdgeInsets.only(left: 5),
-                              //       hintText: "Title",
-                              //       hintStyle: TextStyle(
-                              //           color: Color.fromARGB(255, 149, 164, 192)),
-                              //       border: InputBorder.none),
-                              // ),
+            return SafeArea(
+              child: Scaffold(
+                body: Padding(
+                  padding: MediaQuery.of(context).viewInsets,
+                  child: Wrap(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: const Color(0xffc9f9ff)),
+                        //  height: 500,
+                        width: double.infinity,
+                        child: Column(
+                          children: [
+                            const SizedBox(
+                              height: 5,
                             ),
-                          ),
-                          selectedCategory != null
-                              ? Text(selectedCategory?['categoryName'])
-                              : Text(''),
-                          Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Expanded(
-                                  child: Container(
-                                    height: 50.0,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(10),
-                                      boxShadow: const [
-                                        BoxShadow(
-                                          color: Colors.black12,
-                                          spreadRadius: 1,
-                                          blurRadius: 3,
-                                        ),
-                                      ],
-                                    ),
-                                    child: TextField(
-                                      controller: _amountController,
-                                      textAlign: TextAlign.center,
-                                      decoration: const InputDecoration(
-                                          contentPadding:
-                                              EdgeInsets.only(top: 5),
-                                          hintText: "Amount",
-                                          hintStyle: TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 149, 164, 192)),
-                                          border: InputBorder.none),
-                                    ),
-                                  ),
+                                GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(context2);
+                                    },
+                                    child: Icon(Icons.arrow_back)),
+                                const Text(
+                                  "Add Transaction",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
                                 ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    height: 50,
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        // Navigator.pop(context);
-                                        openModelSheet1(context);
-                                      },
-                                      child: const Text("Select Category"),
-                                      style: ButtonStyle(
-                                          shape: MaterialStateProperty.all<
-                                                  RoundedRectangleBorder>(
-                                              RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
-                                      ))),
-                                    ),
-                                  ),
-                                )
+                                SizedBox()
                               ],
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              // width: 300,
-                              height: 40,
-                              child: ElevatedButton(
-                                onPressed: ()async {
-                                  var prefs = await SharedPreferences.getInstance();
-                                  var userInfo = json.decode(prefs.getString("userInfo")!);
-                                  print('User Info'+ userInfo.toString());
-
-                                  var obj = {
-                                    "amount": _amountController.text,
-                                    "transactionType": selectedTransactionType,
-                                    "categoryName":
-                                        selectedCategory?['categoryName'],
-                                    "categoryIcon":
-                                        selectedCategory?['imageUrl'],
-                                    "userId":userInfo['id'],
-                                    "groupId":primaryGroup['id'],
-                                    "month": DateTime.now().month.toString(),
-                                    "year":DateTime.now().year.toString()
-                                  };
-                                  var error = validateTransactionObj(obj);
-                                  if (error != null) {
-                                    ScaffoldMessenger.of(context2)
-                                        .showSnackBar(SnackBar(
-                                      content: Text(error),
-                                      backgroundColor: Colors.red,
-                                      behavior: SnackBarBehavior.floating,
-                                    ));
-                                    return;
-                                  }
-                                  var response = TransactionService().saveTransaction(obj);
-
-                                  print("Response "+response.toString());
-                                },
-                                child: const Icon(Icons.check),
-                                style: ButtonStyle(
-                                    shape: MaterialStateProperty.all<
-                                            RoundedRectangleBorder>(
-                                        RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ))),
+                            const SizedBox(height: 15),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: transTypes.map((type) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  child: ChoiceChip(
+                                    label: Text(type),
+                                    // labelStyle: const TextStyle(
+                                    //     fontWeight: FontWeight.bold, color: Colors.white),
+                                    selected: selectedTransactionType == type,
+                                    selectedColor:
+                                        selectedTransactionType == "Expense"
+                                            ? Colors.red
+                                            : Colors.green,
+                                    // backgroundColor:
+                                    //     const Color.fromARGB(255, 149, 168, 183),
+                                    onSelected: (bool selected) {
+                                      setState(() {
+                                        selectedTransactionType = type;
+                                      });
+                                      debugPrint(selectedTransactionType);
+                                    },
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      spreadRadius: 1,
+                                      blurRadius: 3,
+                                    ),
+                                  ],
+                                ),
+                                // child: const TextField(
+                                //   decoration: InputDecoration(
+                                //       contentPadding: EdgeInsets.only(left: 5),
+                                //       hintText: "Title",
+                                //       hintStyle: TextStyle(
+                                //           color: Color.fromARGB(255, 149, 164, 192)),
+                                //       border: InputBorder.none),
+                                // ),
                               ),
                             ),
-                          ),
-                        ],
+                            selectedCategory != null
+                                ? Text(selectedCategory?['categoryName'])
+                                : Text(''),
+                            Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      height: 50.0,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(10),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Colors.black12,
+                                            spreadRadius: 1,
+                                            blurRadius: 3,
+                                          ),
+                                        ],
+                                      ),
+                                      child: TextField(
+                                        controller: _amountController,
+                                        textAlign: TextAlign.center,
+                                        decoration: const InputDecoration(
+                                            contentPadding:
+                                                EdgeInsets.only(top: 5),
+                                            hintText: "Amount",
+                                            hintStyle: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 149, 164, 192)),
+                                            border: InputBorder.none),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      height: 50,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          // Navigator.pop(context);
+                                          openModelSheet1(context);
+                                        },
+                                        child: const Text("Select Category"),
+                                        style: ButtonStyle(
+                                            shape: MaterialStateProperty.all<
+                                                    RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                        ))),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                // width: 300,
+                                height: 40,
+                                child:isLoading ? CircularProgressIndicator() : ElevatedButton(
+                                  onPressed: () {
+                                    setState((){
+                                      isLoading = true;
+                                    });
+                                    addTransaction(context2);
+                                    setState((){
+                                      isLoading = false;
+                                    });
+                                  },
+                                  child: const Icon(Icons.check),
+                                  style: ButtonStyle(
+                                      shape: MaterialStateProperty.all<
+                                              RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ))),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );
@@ -364,7 +342,44 @@ class _AddTransactionBtnState extends State<AddTransactionBtn> {
     );
   }
 
+  addTransaction(context2) async {
+    setState(() {
+      isLoading = true;
+    });
+    var prefs = await SharedPreferences.getInstance();
+    var userInfo = json.decode(prefs.getString("userInfo")!);
+    print('User Info' + userInfo.toString());
+
+    var obj = {
+      "amount": _amountController.text,
+      "transactionType": selectedTransactionType,
+      "categoryName": selectedCategory?['categoryName'],
+      "categoryIcon": selectedCategory?['imageUrl'],
+      "userId": userInfo['id'],
+      "groupId": primaryGroup?['id'],
+      "month": DateTime.now().month.toString(),
+      "year": DateTime.now().year.toString()
+    };
+    var error = validateTransactionObj(obj);
+    if (error != null) {
+      ScaffoldMessenger.of(context2).showSnackBar(SnackBar(
+        content: Text(error),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+      ));
+      return;
+    }
+    var response = TransactionService().saveTransaction(obj);
+    setState(() {
+      isLoading = false;
+    });
+    print("Response " + response.toString());
+  }
+
   validateTransactionObj(obj) {
+    if (obj['groupId'] == null) {
+      return "Please add a group first to create transactions";
+    }
     if (obj['amount'] == "") {
       return "Amount is required";
     }
@@ -374,16 +389,16 @@ class _AddTransactionBtnState extends State<AddTransactionBtn> {
     return null;
   }
 
-   var primaryGroup;
+  var primaryGroup;
   getPrimaryGroup() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var userInfo = jsonDecode(prefs.getString("userInfo")!);
     var response = await GroupService().getPrimaryGroup(userInfo['id']);
+    if (response['result'].isEmpty) return;
     setState(() {
       primaryGroup = response['result'][0];
     });
   }
-
 
   var selectedCategory;
 

@@ -117,7 +117,10 @@ class _AddMemberState extends State<AddMember> {
                 Expanded(
                     child: Column(
                   children: [
-                    const Text("Primary", style: TextStyle(fontSize: 12),),
+                    const Text(
+                      "Primary",
+                      style: TextStyle(fontSize: 12),
+                    ),
                     Checkbox(
                       onChanged: (value) {
                         setState(() {
@@ -155,29 +158,23 @@ class _AddMemberState extends State<AddMember> {
               ),
             ),
           ),
-          // Padding(
-          //   padding: const EdgeInsets.all(16.0),
-          //   child: TextField(
-          //     decoration: InputDecoration(
-          //         labelText: "Add member",
-          //         suffixIcon: IconButton(
-          //             onPressed: () {
-          //               showSearch(context: context, delegate: SearchField());
-          //             },
-          //             icon: const Icon(Icons.search))),
-          //   ),
-          // ),
-          ElevatedButton(
-              onPressed: () {
-                saveGroup();
-              },
-              child: const Icon(Icons.check))
+          isLoading
+              ? CircularProgressIndicator()
+              : ElevatedButton(
+                  onPressed: () {
+                    saveGroup();
+                  },
+                  child: const Icon(Icons.check))
         ],
       ),
     );
   }
 
+  bool isLoading = false;
   saveGroup() async {
+    setState(() {
+      isLoading = true;
+    });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var userInfo = jsonDecode(prefs.getString('userInfo')!);
     var obj = {
@@ -200,6 +197,9 @@ class _AddMemberState extends State<AddMember> {
         backgroundColor: Colors.red,
       ));
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 }
 

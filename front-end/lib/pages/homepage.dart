@@ -43,10 +43,10 @@ class _HomepageState extends State<Homepage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var userInfo = jsonDecode(prefs.getString("userInfo")!);
     var response = await GroupService().getPrimaryGroup(userInfo['id']);
+    if(response['result'].isEmpty)return;
     setState(() {
       primaryGroup = response['result'][0];
     });
-    print("primary " + primaryGroup.toString());
   }
 
   @override

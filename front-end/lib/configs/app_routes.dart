@@ -1,5 +1,6 @@
 // import 'package:academic_chatbot/pages/chat_bot_page.dart';
 import 'package:expense_tracker/components/bottom_nav_bar.dart';
+import 'package:expense_tracker/pages/add_transaction_page.dart';
 import 'package:expense_tracker/pages/addgroup_page.dart';
 // import 'package:expense_tracker/pages/addgroup_page.dart';
 import 'package:expense_tracker/pages/budgets_page.dart';
@@ -52,6 +53,11 @@ class AppRoutes {
       name: "addgroup",
       path: "/addgroup",
       pageBuilder: (context, state) => const MaterialPage(child: AddGroup()),
+    ),
+     GoRoute(
+      name: "addtransaction",
+      path: "/addtransaction",
+      pageBuilder: (context, state) => const MaterialPage(child: AddTransactionPage()),
     ),
     GoRoute(
       name: "budgetspage",
