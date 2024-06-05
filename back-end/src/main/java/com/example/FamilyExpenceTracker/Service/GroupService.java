@@ -27,7 +27,7 @@ public class GroupService {
             if(!groups.isEmpty()){
                 List<GroupEntity> primaryGroup = groups.stream()
                         .filter((e) -> e.getIsPrimary().equals("Y"))
-                        .toList();
+                        .collect(Collectors.toList());
                 primaryGroup.get(0).setIsPrimary("N");
                 groupRepository.save(primaryGroup.get(0));
             }
@@ -40,8 +40,7 @@ public class GroupService {
                 .doubleValue();
         System.out.println("PERCENTAGE "+percentage);
         entity.setCurrentAmountInPercent(String.valueOf(percentage));
-        GroupEntity savedEntity = groupRepository.save(entity);
-        return  savedEntity;
+        return groupRepository.save(entity);
     }
 
     public List<GroupEntity> getGroupsByUser(Long userId) {
@@ -59,7 +58,7 @@ public class GroupService {
         if(!groups.isEmpty()){
             List<GroupEntity> primaryGroup = groups.stream()
                     .filter((e) -> e.getIsPrimary().equals("Y"))
-                    .toList();
+                    .collect(Collectors.toList());
             if(!primaryGroup.isEmpty()){
                 primaryGroup.get(0).setIsPrimary("N");
                 groupRepository.save(primaryGroup.get(0));
