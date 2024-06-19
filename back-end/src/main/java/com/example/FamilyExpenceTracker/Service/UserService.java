@@ -30,7 +30,7 @@ public class UserService {
         }
     }
 
-    public List<UserEntity> getAll() {
-        return userRepository.findAll();
+    public List<UserEntity> getAll(String userId) {
+        return userRepository.findAllUsersExceptOwner(userId);
     }
 }

@@ -50,9 +50,9 @@ public class UserController {
     }
 
 
-    @PostMapping(value = "get-all-users")
-    public Response getAllUsers() {
-        List<UserEntity> message = userService.getAll();
+    @PostMapping(value = "get-all-users/{userId}")
+    public Response getAllUsers(@PathVariable String userId) {
+        List<UserEntity> message = userService.getAll(userId);
         if (message != null) {
             Response response = new Response();
             response.setMessage("Success");

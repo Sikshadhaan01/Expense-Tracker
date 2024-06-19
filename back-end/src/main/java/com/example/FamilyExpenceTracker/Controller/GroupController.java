@@ -35,9 +35,9 @@ public class GroupController {
         }
     }
 
-    @PostMapping(value = "get-groups-by-userid/{id}")
-    public Response getGroupsByUserId(@PathVariable String id){
-        List<GroupEntity> groups = groupService.getGroupsByUser(Long.parseLong(id));
+    @PostMapping(value = "get-groups-by-userid/{id}/{email}")
+    public Response getGroupsByUserId(@PathVariable String id, @PathVariable String email){
+        List<GroupEntity> groups = groupService.getGroupsByUser(Long.parseLong(id), email);
         if (groups != null) {
             Response response = new Response();
             response.setMessage("Success");
@@ -88,4 +88,24 @@ public class GroupController {
             return response;
         }
     }
+
+    @PostMapping(value = "delete-by-id/{groupId}")
+    public Response deleteById(@PathVariable String groupId){
+        boolean group = groupService.deleteById(groupId);
+        if (group) {
+            Response response = new Response();
+            response.setMessage("Successfully Removed");
+            response.setStatusCode(200);
+            response.setResult(List.of(group));
+            return response;
+        } else {
+            Response response = new Response();
+            response.setMessage("Failed");
+            response.setStatusCode(400);
+            response.setResult(new ArrayList<>());
+            return response;
+        }
+    }
+
+
 }

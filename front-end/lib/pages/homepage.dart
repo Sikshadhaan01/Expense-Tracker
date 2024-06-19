@@ -43,7 +43,7 @@ class _HomepageState extends State<Homepage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var userInfo = jsonDecode(prefs.getString("userInfo")!);
     var response = await GroupService().getPrimaryGroup(userInfo['id']);
-    if(response['result'].isEmpty)return;
+    if (response['result'].isEmpty) return;
     setState(() {
       primaryGroup = response['result'][0];
     });
@@ -88,7 +88,8 @@ class _HomepageState extends State<Homepage> {
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(10)),
                             border: Border.all(
-                                color: CustomColors().secondaryColor, width: 3)),
+                                color: CustomColors().secondaryColor,
+                                width: 3)),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -103,7 +104,8 @@ class _HomepageState extends State<Homepage> {
                                     Text(
                                       primaryGroup['groupName'],
                                       style: TextStyle(
-                                          color: CustomColors().primaryTextColor,
+                                          color:
+                                              CustomColors().primaryTextColor,
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
                                           letterSpacing: 1),
@@ -118,7 +120,8 @@ class _HomepageState extends State<Homepage> {
                                                     fontSize: 18,
                                                     color: CustomColors()
                                                         .primaryColor,
-                                                    fontWeight: FontWeight.bold)),
+                                                    fontWeight:
+                                                        FontWeight.bold)),
                                             TextSpan(
                                                 text:
                                                     " left of ${formatAmount(primaryGroup['groupBudget'])}",
@@ -128,8 +131,8 @@ class _HomepageState extends State<Homepage> {
                                           ],
                                           style: TextStyle(
                                               // fontSize: 18,
-                                              color:
-                                                  CustomColors().secondaryColor)),
+                                              color: CustomColors()
+                                                  .secondaryColor)),
                                     )
                                   ],
                                 ),
@@ -143,8 +146,8 @@ class _HomepageState extends State<Homepage> {
                               lineHeight: 18.0,
                               barRadius: const Radius.circular(3),
                               center: Text(
-                                "${double.parse(primaryGroup['currentAmountInPercent']) * 1}%",
-                                style:const TextStyle(fontSize: 12.0),
+                                "${double.parse(primaryGroup['currentAmountInPercent']).toStringAsFixed(1) * 1}%",
+                                style: const TextStyle(fontSize: 12.0),
                               ),
                               // trailing: Icon(Icons.mood),
                               // linearStrokeCap: LinearStrokeCap.roundAll,
@@ -165,13 +168,15 @@ class _HomepageState extends State<Homepage> {
                                       text:
                                           "${(double.parse(primaryGroup['currentAmount']) / daysLeftInMonth).toStringAsFixed(1)}/day ",
                                       style: TextStyle(
-                                          color: CustomColors().primaryTextColor,
+                                          color:
+                                              CustomColors().primaryTextColor,
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold)),
                                   TextSpan(
                                       text: "for $daysLeftInMonth days",
                                       style: TextStyle(
-                                          color: CustomColors().primaryTextColor))
+                                          color:
+                                              CustomColors().primaryTextColor))
                                 ]),
                               ),
                             )

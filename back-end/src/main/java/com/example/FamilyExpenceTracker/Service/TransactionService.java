@@ -33,19 +33,44 @@ public class TransactionService {
     }
 
     public TransactionEntity insertTransaction(TransactionEntity insert) {
-        GroupEntity primaryGroup = groupRepository.getPrimaryGroup(Long.parseLong(insert.getUserId()));
-        Long currentAmount = Long.parseLong(primaryGroup.getCurrentAmount())-Long.parseLong(insert.getAmount());
-        primaryGroup.setCurrentAmount(currentAmount.toString());
-        double numerator = Double.parseDouble(primaryGroup.getCurrentAmount());
-        double denominator = Double.parseDouble(primaryGroup.getGroupBudget());
-        // Calculate the percentage
-        double percentage = BigDecimal.valueOf((numerator / denominator) * 100)
-                .setScale(1, RoundingMode.HALF_UP)
-                .doubleValue();
-        primaryGroup.setCurrentAmountInPercent(String.valueOf(percentage));
+        System.out.println("Group ID "+insert.getGroupId());
+        GroupEntity primaryGroup = groupRepository.findById(insert.getGroupId()).get();
+        if(insert.getTransactionType().equals("Expense")){
+            if(Double.parseDouble(insert.getAmount()) > Double.parseDouble(primaryGroup.getCurrentAmount())){
+                return  null;
+            }
+            double currentAmount = Double.parseDouble(primaryGroup.getCurrentAmount())-Double.parseDouble(insert.getAmount());
+            primaryGroup.setCurrentAmount(String.valueOf(currentAmount));
+//            double numerator = Double.parseDouble(primaryGroup.getCurrentAmount());
+            double totalAmount = Double.parseDouble(primaryGroup.getGroupBudget());
+
+            // Calculate the percentage
+            double percentage = this.calculatePercentage(currentAmount,totalAmount);
+            primaryGroup.setCurrentAmountInPercent(String.valueOf(percentage));
+        }else{
+            double currentBudget = Double.parseDouble(primaryGroup.getGroupBudget())+Double.parseDouble(insert.getAmount());
+            primaryGroup.setGroupBudget(String.valueOf(currentBudget));
+            Double currentAmount = Double.parseDouble(primaryGroup.getCurrentAmount())+Double.parseDouble(insert.getAmount());
+            primaryGroup.setCurrentAmount(String.valueOf(currentAmount));
+            double totalAmount = Double.parseDouble(primaryGroup.getGroupBudget());
+            // Calculate the percentage
+//            double percentage = this.calculatePercentage(currentAmount,totalAmount);
+            double percentage = BigDecimal.valueOf((currentAmount / totalAmount) * 100)
+                    .setScale(1, RoundingMode.HALF_DOWN)
+                    .doubleValue();
+            primaryGroup.setCurrentAmountInPercent(String.valueOf(percentage));
+        }
         groupRepository.save(primaryGroup);
         return  transactionRepository.save(insert);
 
+    }
+    public double calculatePercentage(double currentAmount, double totalAmount) {
+        if (totalAmount == 0) {
+            return 0; // or handle the case where totalAmount is 0 to avoid division by zero
+        }
+        double percentage = (currentAmount / totalAmount) * 100;
+        System.out.println("PERCENTAGE "+percentage);
+        return percentage;
     }
 
     public List<TransactionEntity> getUserTransactions(FilterTransactionModal modal) {

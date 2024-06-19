@@ -15,7 +15,7 @@ class AddTransactionPage extends StatefulWidget {
 }
 
 class _AddTransactionPageState extends State<AddTransactionPage> {
-   List categoryImages = [
+  List categoryImages = [
     {
       "imageUrl": "assets/icons8-internet-48.png",
       "categoryName": "Internet",
@@ -119,22 +119,38 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   ];
   var selectedTransactionType = 'Expense';
   List transTypes = ["Expense", "Income"];
+  List groups = [];
   bool isLoading = false;
   TextEditingController _amountController = TextEditingController();
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getPrimaryGroup();
+    // getPrimaryGroup();
+    getGroups();
   }
 
+  var dropdownValue = "Select";
+  dynamic selectedGroup;
+  getGroups() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var userInfo = jsonDecode(prefs.getString('userInfo')!);
+    print(userInfo);
+    var response = await GroupService()
+        .getAllGroups(userInfo['id'].toString(), userInfo['email'].toString());
+    setState(() {
+      groups = response['result'];
+      selectedGroup = groups.first;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(title: Text('Add Transaction'),),
+        appBar: AppBar(
+          title: Text('Add Transaction'),
+        ),
         body: Padding(
           padding: MediaQuery.of(context).viewInsets,
           child: Wrap(
@@ -258,6 +274,23 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                         ],
                       ),
                     ),
+                    groups.isNotEmpty
+                        ? DropdownButton<dynamic>(
+                            hint: Text('Select group'),
+                            value: selectedGroup,
+                            onChanged: (dynamic newValue) {
+                              setState(() {
+                                selectedGroup = newValue;
+                              });
+                            },
+                            items: groups.map((dynamic group) {
+                              return DropdownMenuItem<dynamic>(
+                                value: group,
+                                child: Text(group['groupName']),
+                              );
+                            }).toList(),
+                          )
+                        : CircularProgressIndicator(),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
@@ -288,7 +321,8 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
       ),
     );
   }
-   addTransaction() async {
+
+  addTransaction() async {
     setState(() {
       isLoading = true;
     });
@@ -302,7 +336,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
       "categoryName": selectedCategory?['categoryName'],
       "categoryIcon": selectedCategory?['imageUrl'],
       "userId": userInfo['id'],
-      "groupId": primaryGroup?['id'],
+      "groupId": selectedGroup?['id'],
       "month": DateTime.now().month.toString(),
       "year": DateTime.now().year.toString()
     };
@@ -313,9 +347,22 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         backgroundColor: Colors.red,
         behavior: SnackBarBehavior.floating,
       ));
+      setState(() {
+        isLoading = false;
+      });
       return;
     }
-    var response = TransactionService().saveTransaction(obj);
+    var response = await TransactionService().saveTransaction(obj);
+    print("Respone" + response.toString());
+    if (response['statusCode'] == 200) {
+      GoRouter.of(context).go('/');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(response['message']),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+      ));
+    }
     setState(() {
       isLoading = false;
     });
@@ -324,7 +371,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
 
   validateTransactionObj(obj) {
     if (obj['groupId'] == null) {
-      return "Please add a group first to create transactions";
+      return "Please select a group first to create transactions";
     }
     if (obj['amount'] == "") {
       return "Amount is required";

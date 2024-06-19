@@ -81,7 +81,9 @@ class _AddMemberState extends State<AddMember> {
   }
 
   getAllMembers() async {
-    var response = await UserService().getAllUsers();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var userInfo = jsonDecode(prefs.getString("userInfo")!);
+    var response = await UserService().getAllUsers(userInfo['id']);
     setState(() {
       allMembers = response['result'][0];
       _items = allMembers

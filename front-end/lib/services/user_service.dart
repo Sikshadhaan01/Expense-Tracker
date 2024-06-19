@@ -21,8 +21,8 @@ class UserService {
     return response.data;
   }
 
-  Future getAllUsers() async {
-    var url = baseUrl + "/users/get-all-users";
+  Future getAllUsers(userId) async {
+    var url = baseUrl + "/users/get-all-users/$userId";
     // var encode = jsonEncode(jsonObj);
     var response = await dio.post(url);
     return response.data;

@@ -32,7 +32,8 @@ class _BudgetPageState extends State<BudgetPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var userInfo = jsonDecode(prefs.getString('userInfo')!);
     print(userInfo);
-    var response = await GroupService().getAllGroups(userInfo['id'].toString());
+    var response = await GroupService()
+        .getAllGroups(userInfo['id'].toString(), userInfo['email'].toString());
     setState(() {
       groups = response['result'];
     });
@@ -74,7 +75,7 @@ class _BudgetPageState extends State<BudgetPage> {
                 itemBuilder: (context, index) {
                   return BudgetCard(
                     groupDetails: groups[index],
-                    setAsPrimary: (){
+                    setAsPrimary: () {
                       setAsPrimary(context, groups[index]);
                     },
                   );
@@ -106,8 +107,10 @@ class _BudgetPageState extends State<BudgetPage> {
       ),
     );
   }
-  setAsPrimary(context , groupDetails)async{
-    var response = await GroupService().setAsPrimary(groupDetails['id'], groupDetails['userId']);
+
+  setAsPrimary(context, groupDetails) async {
+    var response = await GroupService()
+        .setAsPrimary(groupDetails['id'], groupDetails['userId']);
     if (response["statusCode"] == 200) {
       getGroups();
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -127,7 +130,8 @@ class BudgetCard extends StatefulWidget {
   var groupDetails;
   // typedef VoidCallback = void Function();
   final VoidCallback setAsPrimary;
-  BudgetCard({super.key, required this.groupDetails, required this.setAsPrimary});
+  BudgetCard(
+      {super.key, required this.groupDetails, required this.setAsPrimary});
 
   @override
   State<BudgetCard> createState() => _BudgetCardState();
@@ -141,7 +145,7 @@ class _BudgetCardState extends State<BudgetCard> {
   get budgetTotal => 20000;
 
   @override
-  initState(){
+  initState() {
     super.initState();
     setDaysLeftInMonth();
   }
@@ -230,11 +234,12 @@ class _BudgetCardState extends State<BudgetCard> {
               height: 10,
             ),
             LinearPercentIndicator(
-              percent: getPercentile(widget.groupDetails['currentAmountInPercent']),
+              percent:
+                  getPercentile(widget.groupDetails['currentAmountInPercent']),
               lineHeight: 18.0,
               barRadius: const Radius.circular(3),
               center: Text(
-                "${double.parse(widget.groupDetails['currentAmountInPercent']) * 1}%",
+                "${double.parse(widget.groupDetails['currentAmountInPercent']).toStringAsFixed(1) * 1}%",
                 style: const TextStyle(fontSize: 12.0),
               ),
               // trailing: Icon(Icons.mood),

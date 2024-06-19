@@ -12,8 +12,8 @@ class GroupService {
     return response.data;
   }
 
-  getAllGroups(id) async {
-    var url = baseUrl + "/groups/get-groups-by-userid/"+id;
+  getAllGroups(id, email) async {
+    var url = baseUrl + "/groups/get-groups-by-userid/" + id + "/" + email;
     // var encode = jsonEncode(jsonObj);
     var response = await dio.post(url);
     return response.data;
@@ -25,7 +25,7 @@ class GroupService {
     var response = await dio.post(url);
     return response.data;
   }
-  
+
   setAsPrimary(groupId, userId) async {
     var url = baseUrl + "/groups/set-as-primary/${groupId}/${userId}";
     // var encode = jsonEncode(jsonObj);
